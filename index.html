@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ilmohallinta</title>
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet" type="text/css">
+  <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet" type="text/css"></link>
+  <link href="styles.css" rel="stylesheet" type="text/css">
+  <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+
+  <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-messaging.js"></script>
+
+  <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />  
+
+
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <main>
+        <v-content>
+          <v-container>
+            <h1>Title <span  v-if="signed_in" class="body-1">User: {{user.displayName}} <v-btn small @click="sign_out()">Sign out</v-btn></span></h1>
+
+            <div v-if="!signed_in">
+              <div id="firebaseui-auth-container"></div>
+            </div>
+  
+            <v-snackbar :timeout="5000" v-model="snackbar">
+              {{snackbar_text}}
+              <v-btn flat color="pink" @click.native="snackbar = false">Close</v-btn>
+            </v-snackbar>
+
+            <v-card class="ma-2">
+              <v-card-title primary-title>
+                <h2>Koulutukset</h2>
+              </v-card-title>
+              <v-card-text>
+                <div v-for="koulutus in koulutukset" v-if="koulutukset.length">
+                    <h3>{{koulutus.nimi}}</h3>
+                </div>
+              </v-card-text>
+            </v-card>      
+            
+          </v-container>  
+        </v-content>
+      </main>
+    </v-app>
+  </div>
+
+  
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
