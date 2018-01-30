@@ -23,8 +23,19 @@ new Vue({
 
         self.loading++;
         this.db.collection("koulutukset").get().then(function(koulutukset) {
-            console.table(koulutukset);
-            console.log(koulutukset.length);
+            koulutukset.forEach(function(doc) {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+            });
+        });
+        self.loading--;
+
+        self.loading++;
+        this.db.collection("oppilaat").get().then(function(oppilaat) {
+            oppilaat.forEach(function(oppilas) {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(oppilas.id, " => ", oppilas.data());
+            });
         });
         self.loading--;
     },
