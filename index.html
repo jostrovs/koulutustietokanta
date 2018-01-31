@@ -30,6 +30,9 @@
           <v-container>
             <h1>Title <span  v-if="signed_in" class="body-1">User: {{user.displayName}} uid: {{user.uid}} <v-btn small @click="sign_out()">Sign out</v-btn></span></h1>
 
+            <v-btn primary @click.stop="user_dialog=true">Users</v-btn>
+            <vue-users :db="db" :dialog="user_dialog"></vue-users>
+
             <div v-show="!signed_in">
               <div id="firebaseui-auth-container"></div>
             </div>
@@ -71,6 +74,7 @@
   
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+  <script src="users.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

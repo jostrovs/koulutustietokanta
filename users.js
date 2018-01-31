@@ -4,10 +4,10 @@ new Vue({
         snackbar: false,
         snackbar_text: "",
 
-        koulutukset: [],
         users: [],
 
-        user_dialog: false,
+        edit_dialog: false,
+        edit_user: {},
 
         loading: 0,
 
@@ -25,26 +25,13 @@ new Vue({
         self.initFirebaseUi();
 
         self.loading++;
-        this.db.collection("koulutukset").get().then(function(koulutukset) {
-            koulutukset.forEach(function(koulutus) {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(koulutus.id, " => ", koulutus.data());
-                self.koulutukset.push(koulutus.data());
-            });
-        })
-        .catch(function(error){
-            console.log("Koulutusten haku epäonnistui: " + error);
-            self.snackbar_text = "Koulutusten haku epäonnistui: " + error;
-            self.snackbar = true;
-        });           
-        self.loading--;
-
-        self.loading++;
         this.db.collection("users").get().then(function(users) {
             users.forEach(function(user) {
                 // doc.data() is never undefined for query doc snapshots
                 console.log(user.id, " => ", user.data());
-                self.users.push(user.data());
+                let newUser = user.data();
+                newUser.uid = user.id;
+                self.users.push(newUser);
             });
         })
         .catch(function(error){
@@ -126,16 +113,36 @@ new Vue({
             });
         },
 
-        addKoulutus(){
-            this.db.collection("koulutukset").add({
-                nimi: "Eskokoko",
-            }).then(function(){location.reload()});
-
-        },
-
         sign_out(){
             let self = this;
             firebase.auth().signOut().then(function(){location.reload()});
-        }
+        },
+
+        edit(user){
+            this.edit_user = user;
+            this.edit_dialog = true;
+        },        
+
+        save(user){
+            let self=this;
+            
+            let userRef = this.db.collection("users").doc(user.uid);
+            userRef.set({
+                nimi: user.nimi,
+                admin: user.admin?true:false,
+            }, {merge: true})
+            .then(function(){
+                self.edit_dialog = false;
+
+                self.snackbar_text = "Talletus onnistui.";
+                self.snackbar = true;
+            })
+            .catch(function(error){
+                console.log("Käyttäjän talletus epäonnistui: " + error);
+                self.snackbar_text = "Käyttäjän talletus epäonnistui: " + error;
+                self.snackbar = true;
+            });           
+
+        },        
     }
 })
