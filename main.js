@@ -5,6 +5,7 @@ new Vue({
         snackbar_text: "",
 
         koulutukset: [],
+        users: [],
 
         loading: 0,
 
@@ -23,21 +24,33 @@ new Vue({
 
         self.loading++;
         this.db.collection("koulutukset").get().then(function(koulutukset) {
-            koulutukset.forEach(function(doc) {
+            koulutukset.forEach(function(koulutus) {
                 // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
+                console.log(koulutus.id, " => ", koulutus.data());
+                self.koulutukset.push(koulutus.data());
             });
-        });
+        })
+        .catch(function(error){
+            console.log("Koulutusten haku epäonnistui: " + error);
+            self.snackbar_text = "Koulutusten haku epäonnistui: " + error;
+            self.snackbar = true;
+        });           
         self.loading--;
 
         self.loading++;
-        this.db.collection("oppilaat").get().then(function(oppilaat) {
-            oppilaat.forEach(function(oppilas) {
+        this.db.collection("users").get().then(function(users) {
+            users.forEach(function(user) {
                 // doc.data() is never undefined for query doc snapshots
-                console.log(oppilas.id, " => ", oppilas.data());
+                console.log(user.id, " => ", user.data());
+                self.users.push(user.data());
             });
-        });
-        self.loading--;
+        })
+        .catch(function(error){
+            console.log("Käyttäjien haku epäonnistui: " + error);
+            self.snackbar_text = "Käyttäjien haku epäonnistui: " + error;
+            self.snackbar = true;
+        });           
+    self.loading--;
     },
     mounted: function(){
     },  
@@ -109,6 +122,13 @@ new Vue({
             }, function(error) {
                 console.log(error);
             });
+        },
+
+        addKoulutus(){
+            this.db.collection("koulutukset").add({
+                nimi: "Eskokoko",
+            }).then(function(){location.reload()});
+
         },
 
         sign_out(){

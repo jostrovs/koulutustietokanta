@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ilmohallinta</title>
+  <title>Koulutustietokanta</title>
   <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet" type="text/css">
   <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet" type="text/css"></link>
   <link href="styles.css" rel="stylesheet" type="text/css">
@@ -28,9 +28,9 @@
       <main>
         <v-content>
           <v-container>
-            <h1>Title <span  v-if="signed_in" class="body-1">User: {{user.displayName}} <v-btn small @click="sign_out()">Sign out</v-btn></span></h1>
+            <h1>Title <span  v-if="signed_in" class="body-1">User: {{user.displayName}} uid: {{user.uid}} <v-btn small @click="sign_out()">Sign out</v-btn></span></h1>
 
-            <div v-if="!signed_in">
+            <div v-show="!signed_in">
               <div id="firebaseui-auth-container"></div>
             </div>
   
@@ -42,10 +42,22 @@
             <v-card class="ma-2">
               <v-card-title primary-title>
                 <h2>Koulutukset</h2>
+                <v-btn color="primary" @click="addKoulutus()">Lisää</v-btn>
               </v-card-title>
               <v-card-text>
                 <div v-for="koulutus in koulutukset" v-if="koulutukset.length">
                     <h3>{{koulutus.nimi}}</h3>
+                </div>
+              </v-card-text>
+            </v-card>      
+
+            <v-card class="ma-2">
+              <v-card-title primary-title>
+                <h2>Users</h2>
+              </v-card-title>
+              <v-card-text>
+                <div v-for="user in users">
+                    <h3>{{user.nimi}}</h3>
                 </div>
               </v-card-text>
             </v-card>      
