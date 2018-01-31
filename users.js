@@ -197,6 +197,7 @@ new Vue({
             this.edit_user = {};
             this.edit_dialog = true;
             this.is_create = true;
+            this.edit_progress = false;
         },        
     }
 })
