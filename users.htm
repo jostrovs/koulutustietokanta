@@ -27,7 +27,8 @@
         <v-app>
             <v-content>
                 <v-container>
-                    <h1>Käyttäjähallinta <span  v-if="signed_in" class="body-1">User: {{user.displayName}} uid: {{user.uid}} <v-btn small @click="sign_out()">Sign out</v-btn></span></h1>
+                    <h1>Koulutustietokanta - käyttäjähallinta</h1>
+                    <span  v-if="signed_in" class="body-1">User: {{user.displayName}} uid: {{user.uid}} <v-btn small @click="sign_out()">Sign out</v-btn></span>
 
                     <div v-show="!signed_in">
                         <div id="firebaseui-auth-container"></div>
@@ -43,6 +44,10 @@
                             <h2>Users</h2>
                         </v-card-title>
                     
+                        <v-btn absolute dark fab top right color="pink" @click="create()" v-if="signed_in">
+                            <v-icon>add</v-icon>
+                        </v-btn>
+
                         <v-card-text>
                             <v-list>
                                 <v-list-tile v-for="user in users" :key="user.uid">
@@ -59,13 +64,13 @@
                                         <v-list-tile-title v-text="user.uid"></v-list-tile-title>
                                     </v-list-tile-content>
                                     <v-list-tile-action>
-                                        <v-btn icon ripple>
-                                            <v-icon color="grey lighten-1">info</v-icon>
+                                        <v-btn icon ripple @click="remove(user)">
+                                            <v-icon color="grey lighten-0">delete</v-icon>
                                         </v-btn>
                                     </v-list-tile-action>                                    
                                     <v-list-tile-action>
                                         <v-btn icon ripple  @click="edit(user)">
-                                            <v-icon color="grey lighten-1">edit</v-icon>
+                                            <v-icon color="grey">edit</v-icon>
                                         </v-btn>
                                     </v-list-tile-action>                                    
                                 </v-list-tile>
@@ -75,7 +80,11 @@
                   
                     <v-dialog v-model="edit_dialog"  max-width="320">
                         <v-card>
-                            <v-card-title>
+                            <v-card-title v-if="is_create">
+                                <v-icon color="black">person_add</v-icon>
+                                <h3 class="title mb-0">Lisää käyttäjä</h3>
+                            </v-card-title>
+                            <v-card-title v-else>
                                 <v-icon color="black">edit</v-icon>
                                 <h3 class="title mb-0">Muokkaa käyttäjää</h3>
                             </v-card-title>
@@ -85,12 +94,33 @@
                                     <v-switch label="Admin" v-model="edit_user.admin"></v-switch>
                                 </v-form>                                            
                             </v-card-text>
-                            <v-card-text>
+                            <v-card-text v-if="is_create">
+                                <v-text-field label="uid" v-model="edit_user.uid" required></v-text-field>
+                            </v-card-text>
+                            <v-card-text v-else>
                                 uid: {{edit_user.uid}}
                             </v-card-text>
+                            <v-progress-linear v-bind:indeterminate="true" v-if="edit_progress"></v-progress-linear>
                             <v-card-actions>
-                            <v-btn color="primary" @click.stop="save(edit_user)">Talleta</v-btn>
-                            <v-btn color="error" @click.stop="edit_dialog=false">Peruuta</v-btn>
+                                <v-btn color="primary" @click.stop="edit(edit_user, true)">Talleta</v-btn>
+                                <v-btn color="error" @click.stop="edit_dialog=false">Peruuta</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+
+                    <v-dialog v-model="remove_dialog"  max-width="250">
+                        <v-card>
+                            <v-card-title>
+                                <v-icon color="black">delete</v-icon>
+                                <h3 class="title mb-0">Poista käyttäjä</h3>
+                            </v-card-title>
+                            <v-card-text>
+                                <p>Haluatko varmasti poistaa käyttäjän {{remove_user.nimi}}?</p>
+                            </v-card-text>
+                            <v-progress-linear v-bind:indeterminate="true" v-if="remove_progress"></v-progress-linear>
+                            <v-card-actions>
+                                <v-btn color="error" @click.stop="remove(remove_user, true)">Poista</v-btn>
+                                <v-btn color="primary" @click.stop="remove_dialog=false">Peruuta</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-dialog>

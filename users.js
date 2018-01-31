@@ -8,6 +8,12 @@ new Vue({
 
         edit_dialog: false,
         edit_user: {},
+        edit_progress: true,
+        is_create: false,
+
+        remove_dialog: false,
+        remove_progress: false,
+        remove_user: {},
 
         loading: 0,
 
@@ -118,31 +124,79 @@ new Vue({
             firebase.auth().signOut().then(function(){location.reload()});
         },
 
-        edit(user){
-            this.edit_user = user;
-            this.edit_dialog = true;
+        remove(user, confirmed){
+            let self=this;
+
+            if(confirmed){
+                // Poistetaan todella.
+                this.remove_progress = true;
+
+                this.db.collection("users").doc(user.uid).delete()
+                .then(function(){
+                    self.remove_dialog = false;
+    
+                    self.snackbar_text = "Käyttäjän poistaminen onnistui; ladataan uudestaan";
+                    self.snackbar = true;
+
+                    setTimeout(function(){ location.reload()}, 3000);
+                })
+                .catch(function(error){
+                    console.log("Käyttäjän poistaminen epäonnistui: " + error);
+                    self.snackbar_text = "Käyttäjän poistaminen epäonnistui: " + error;
+                    self.snackbar = true;
+                });           
+                    
+            } else {
+                // Avataan vahvistusdialogi
+                this.remove_user = user;
+                this.remove_dialog = true;
+                this.remove_progress = false;
+            }
         },        
 
-        save(user){
+        edit(user, confirmed){
             let self=this;
-            
-            let userRef = this.db.collection("users").doc(user.uid);
-            userRef.set({
-                nimi: user.nimi,
-                admin: user.admin?true:false,
-            }, {merge: true})
-            .then(function(){
-                self.edit_dialog = false;
 
-                self.snackbar_text = "Talletus onnistui.";
-                self.snackbar = true;
-            })
-            .catch(function(error){
-                console.log("Käyttäjän talletus epäonnistui: " + error);
-                self.snackbar_text = "Käyttäjän talletus epäonnistui: " + error;
-                self.snackbar = true;
-            });           
+            if(confirmed){
+                // Talletetaan
+                this.edit_progress = true;
 
+                let userRef = this.db.collection("users").doc(user.uid);
+                userRef.set({
+                    nimi: user.nimi,
+                    admin: user.admin?true:false,
+                }, {merge: true})
+                .then(function(){
+                    self.edit_dialog = false;
+
+                    self.snackbar = true;
+
+                    if(self.is_create){
+                        self.snackbar_text = "Talletus onnistui; ladataan uudelleen.";
+                        setTimeout(function(){ location.reload()}, 3000);
+                    } else {
+                        self.snackbar_text = "Talletus onnistui.";
+                    }
+                })
+                .catch(function(error){
+                    console.log("Käyttäjän talletus epäonnistui: " + error);
+                    self.snackbar_text = "Käyttäjän talletus epäonnistui: " + error;
+                    self.snackbar = true;
+                });           
+            } else {
+                // Avataan dialogi
+                this.edit_user = user;
+                this.edit_dialog = true;
+                this.is_create = false;
+                this.edit_progress = false;
+            }
+        },        
+
+        create(){
+            // Avataan edit-dialogi
+            this.edit_user = {};
+            this.edit_dialog = true;
+            this.is_create = true;
         },        
     }
 })
