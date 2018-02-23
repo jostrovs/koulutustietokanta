@@ -1,6 +1,8 @@
 new Vue({
     el: '#app',
     data: {
+        id: 1,
+        
         snackbar: false,
         snackbar_text: "",
 
@@ -32,7 +34,10 @@ new Vue({
             koulutukset.forEach(function(koulutus) {
                 // doc.data() is never undefined for query doc snapshots
                 console.log(koulutus.id, " => ", koulutus.data());
-                self.koulutukset.push(koulutus.data());
+                let newKoulutus = koulutus.data();
+                if(newKoulutus.osallistujat) newKoulutus.osallistujat.map(osall=>osall.id=self.id++);
+                self.koulutukset.push(newKoulutus);
+
             });
         })
         .catch(function(error){
@@ -142,24 +147,55 @@ new Vue({
         },
 
         add_osallistuja(){
-            this.edit_koulutus.osallistujat.push({});
+            this.edit_koulutus.osallistujat.push({ id: this.id++});
         },
 
         remove_osallistuja(osallistuja){
-            this.edit_koulutus.osallistujat = this.edit_koulutus.osallistujat.filter(osall=>{ return osall.uid !== osallistuja.uid;});
+            this.edit_koulutus.osallistujat = this.edit_koulutus.osallistujat.filter(osall=>{ return osall.id !== osallistuja.id;});
+        },
+
+        save(koulutus){
+            let self = this;
+
+            if(!koulutus.uid){
+                this.db.collection("koulutukset").add({
+                    nimi: this.edit_koulutus.nimi,
+                    osallistujat: this.edit_koulutus.osallistujat,
+                })
+                .then(function(docRef){
+                    self.edit_dialog=false;
+                    self.snackbar_text = "Document written with ID: " + docRef.id;
+                    self.snackbar=true;
+                })
+                .catch(function(error) {
+                    self.snackbar_text="Error adding document: "+ error;
+                    self.snackbar=true;
+                });
+            } else {
+                this.db.collection("koulutukset").doc(this.edit_koulutus.uid).set({
+                    nimi: this.edit_koulutus.nimi,
+                    osallistujat: this.edit_koulutus.osallistujat,
+                })
+                .then(function(){
+                    self.edit_dialog=false;
+                    self.snackbar_text="Document succesfully written!";
+                    self.snackbar=true;
+                })
+                .catch(function(error) {
+                    self.snackbar_text="Error writing document: "+ error;
+                    self.snackbar=true;
+                });
+            }
         },
 
         edit(koulutus){
+            let self = this;
+
             this.edit_dialog=true;
             this.edit_koulutus.nimi = koulutus.nimi;
             this.edit_koulutus.puh = koulutus.puh;
             this.edit_koulutus.paikkakunta = koulutus.paikkakunta;
-
-            this.edit_koulutus.osallistujat = [];
-            this.edit_koulutus.osallistujat.push({ nimi: "Osall1", uid: "1"});
-            this.edit_koulutus.osallistujat.push({ nimi: "Esko", uid: "2"});
-            this.edit_koulutus.osallistujat.push({ nimi: "Miro", uid: "3"});
-            this.edit_koulutus.osallistujat.push({ nimi: "Heiskanen", uid: "4"});
+            this.edit_koulutus.osallistujat = koulutus.osallistujat;
         },
 
         editOsallistujat(koulutus){

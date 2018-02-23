@@ -73,12 +73,13 @@
                                     <table>
                                         <tr v-for="osallistuja in edit_koulutus.osallistujat">
                                             <td>{{osallistuja.nimi}}</td>
-                                            <td>{{osallistuja.uid}}</td>
+                                            <td>{{osallistuja.id}}</td>
                                         </tr>
                                     </table>
                                 </v-card-text>
                                 <v-card-actions>
-                                    <v-btn color="primary" @click.stop="edit_dialog=false">Close</v-btn>
+                                    <v-btn color="primary" @click.stop="save(edit_koulutus)">Talleta</v-btn>
+                                    <v-btn @click.stop="edit_dialog=false">Sulje</v-btn>
                                 </v-card-actions>                            
                             </v-card>
                         </v-dialog>
@@ -106,7 +107,7 @@
                                         </tr>
                                         <tr v-for="osallistuja in edit_koulutus.osallistujat">
                                             <td><input type="text" placeholder="Nimi" v-model=osallistuja.nimi></td>
-                                            <td><input type="text" placeholder="Uid" v-model=osallistuja.uid></td>
+                                            <td>{{osallistuja.id}}</td>
                                             <td><input type="text" placeholder="Email" v-model=osallistuja.email></td>
                                             <td><input type="text" placeholder="Paikkakunta" v-model=osallistuja.paikkakunta></td>
                                             <td><input type="text" placeholder="Postinumero" v-model=osallistuja.postinumero></td>
