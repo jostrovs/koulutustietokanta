@@ -68,18 +68,55 @@
                                     <h3>{{edit_koulutus.nimi}}</h3>
                                     {{edit_koulutus.puh}} {{edit_koulutus.paikkakunta}}
 
+                                    <v-btn @click="editOsallistujat(edit_koulutus)">Muokkaa osallistujia</v-btn>
+                                    
                                     <table>
                                         <tr v-for="osallistuja in edit_koulutus.osallistujat">
                                             <td>{{osallistuja.nimi}}</td>
                                             <td>{{osallistuja.uid}}</td>
-                                            <td>
-                                                <v-icon style="cursor: pointer" @click="remove_osallistuja(osallistuja)">delete</v-icon>
-                                            </td>
                                         </tr>
                                     </table>
                                 </v-card-text>
                                 <v-card-actions>
                                     <v-btn color="primary" @click.stop="edit_dialog=false">Close</v-btn>
+                                </v-card-actions>                            
+                            </v-card>
+                        </v-dialog>
+
+                        <v-dialog :overlay="true" scrollable v-model="osallistujat_dialog">
+                            <v-card>
+                                <v-card-title primary-title>
+                                    <h2>Koulutuksen osallistujat - {{edit_koulutus.nimi}}</h2>
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-btn color="primary" @click="add_osallistuja()">
+                                        <v-icon>add</v-icon>Lisää
+                                    </v-btn>                                    
+                                </v-card-text>
+                                <v-card-text>
+                                    <table>
+                                        <tr>
+                                            <th>Nimi</th>
+                                            <th>Uid</th>
+                                            <th>Email</th>
+                                            <th>Paikkakunta</th>
+                                            <th>Postinumero</th>
+                                            <th>Syntymävuosi</th>
+                                            <th></th>
+                                        </tr>
+                                        <tr v-for="osallistuja in edit_koulutus.osallistujat">
+                                            <td><input type="text" placeholder="Nimi" v-model=osallistuja.nimi></td>
+                                            <td><input type="text" placeholder="Uid" v-model=osallistuja.uid></td>
+                                            <td><input type="text" placeholder="Email" v-model=osallistuja.email></td>
+                                            <td><input type="text" placeholder="Paikkakunta" v-model=osallistuja.paikkakunta></td>
+                                            <td><input type="text" placeholder="Postinumero" v-model=osallistuja.postinumero></td>
+                                            <td><input type="text" placeholder="Syntymävuosi" v-model=osallistuja.vuosi></td>
+                                            <td><v-icon @click="remove_osallistuja(osallistuja)">delete</v-icon></td>
+                                        </tr>
+                                    </table>
+                                </v-card-text>
+                                <v-card-actions>
+                                    <v-btn color="primary" @click.stop="osallistujat_dialog=false">Close</v-btn>
                                 </v-card-actions>                            
                             </v-card>
                         </v-dialog>

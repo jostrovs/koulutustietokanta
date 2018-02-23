@@ -10,6 +10,8 @@ new Vue({
         edit_dialog: false,
         edit_koulutus: { osallistujat: []},
 
+        osallistujat_dialog: false,
+
         loading: 0,
 
         // Firebase jutut
@@ -139,6 +141,10 @@ new Vue({
             firebase.auth().signOut().then(function(){location.reload()});
         },
 
+        add_osallistuja(){
+            this.edit_koulutus.osallistujat.push({});
+        },
+
         remove_osallistuja(osallistuja){
             this.edit_koulutus.osallistujat = this.edit_koulutus.osallistujat.filter(osall=>{ return osall.uid !== osallistuja.uid;});
         },
@@ -154,6 +160,10 @@ new Vue({
             this.edit_koulutus.osallistujat.push({ nimi: "Esko", uid: "2"});
             this.edit_koulutus.osallistujat.push({ nimi: "Miro", uid: "3"});
             this.edit_koulutus.osallistujat.push({ nimi: "Heiskanen", uid: "4"});
+        },
+
+        editOsallistujat(koulutus){
+            this.osallistujat_dialog=true;
         }
 
 
