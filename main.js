@@ -7,7 +7,8 @@ new Vue({
         koulutukset: [],
         users: [],
 
-        user_dialog: false,
+        edit_dialog: false,
+        edit_koulutus: { osallistujat: []},
 
         loading: 0,
 
@@ -136,6 +137,25 @@ new Vue({
         sign_out(){
             let self = this;
             firebase.auth().signOut().then(function(){location.reload()});
+        },
+
+        remove_osallistuja(osallistuja){
+            this.edit_koulutus.osallistujat = this.edit_koulutus.osallistujat.filter(osall=>{ return osall.uid !== osallistuja.uid;});
+        },
+
+        edit(koulutus){
+            this.edit_dialog=true;
+            this.edit_koulutus.nimi = koulutus.nimi;
+            this.edit_koulutus.puh = koulutus.puh;
+            this.edit_koulutus.paikkakunta = koulutus.paikkakunta;
+
+            this.edit_koulutus.osallistujat = [];
+            this.edit_koulutus.osallistujat.push({ nimi: "Osall1", uid: "1"});
+            this.edit_koulutus.osallistujat.push({ nimi: "Esko", uid: "2"});
+            this.edit_koulutus.osallistujat.push({ nimi: "Miro", uid: "3"});
+            this.edit_koulutus.osallistujat.push({ nimi: "Heiskanen", uid: "4"});
         }
+
+
     }
 })
