@@ -3,6 +3,8 @@ new Vue({
     data: {
         id: 1,
         
+        tabs: null,
+
         snackbar: false,
         snackbar_text: "",
 
@@ -22,6 +24,8 @@ new Vue({
         
         user: {},
         signed_in: false,
+
+        keys: [],
     },
     created(){
         let self = this;
@@ -34,8 +38,11 @@ new Vue({
             koulutukset.forEach(function(koulutus) {
                 // doc.data() is never undefined for query doc snapshots
                 console.log(koulutus.id, " => ", koulutus.data());
+                self.keys.push(koulutus.id);
                 let newKoulutus = koulutus.data();
-                if(newKoulutus.osallistujat) newKoulutus.osallistujat.map(osall=>osall.id=self.id++);
+                if(newKoulutus.osallistujat) newKoulutus.osallistujat.map(osall=>{
+                    osall.id=self.id++;
+                });
                 self.koulutukset.push(newKoulutus);
 
             });
@@ -65,12 +72,28 @@ new Vue({
     mounted: function(){
     },  
     computed: {
-
-
-
+        oppilaat(){
+            let ret = [];
+            console.log("Koulutuksia: " + this.koulutukset.length)
+            for(let koulutus of this.koulutukset){
+                if(!koulutus.osallistujat) continue;
+                koulutus.osallistujat.map(osallistuja=>ret.push(osallistuja));
+            }
+            return ret;
+        }
     },
 
     methods: {
+        newKey(kouluttaja, tilaisuus, date){
+            let suffix=1;
+            let key = date + "_" + kouluttaja + "_" + "aihe";
+            while(this.keys.indexOf(key + "_" + suffix) >= 0){
+                suffix++;
+            }
+
+            return key + "_" + suffix;
+        },
+        
         initFirebase(){
             // Initialize Firebase
             var config = {
@@ -135,8 +158,12 @@ new Vue({
         },
 
         addKoulutus(){
-            this.db.collection("koulutukset").add({
-                nimi: "Eskokoko",
+            
+            let key = this.newKey("Esko Hannula", "Peruskurssi", "2018.03.03");
+            this.db.collection("koulutukset").doc(key).set({
+                kouluttaja: "Esko Hannula",
+                tilaisuus: "Peruskurssi",
+                date: "2018.03.03",
             }).then(function(){location.reload()});
 
         },
