@@ -1,3 +1,16 @@
+const UPDATE_GRID = "UPDATE_GRID";
+
+var bus = new Vue({
+    methods: {
+        on: function(event, callback){
+            this.$on(event, callback);
+        },
+        emit: function(event, payload){
+            this.$emit(event, payload);
+        }
+    }
+});
+
 new Vue({
     el: '#app',
     data: {
@@ -15,8 +28,26 @@ new Vue({
         edit_koulutus: { osallistujat: []},
 
         osallistujat_dialog: false,
+        oppilas_options: {
+            columns: [
+                { title: 'Nimi', width: "50%", key: 'nimi' },
+                { title: 'Vuosi', width: "10%", key: 'vuosi' },
+                { title: 'Email', width: "10%", key: 'email' },
+            ],
+
+            generalFilter: true,
+            columnFilters: true,
+
+            onCreated: function(component){
+                bus.on(UPDATE_GRID, function(data){
+                    component.setData(data);
+                })
+            },
+        },
 
         loading: 0,
+
+        oppilasLoader: 0,
 
         // Firebase jutut
         db: {},
@@ -34,10 +65,15 @@ new Vue({
         self.initFirebaseUi();
 
         self.loading++;
+
+        let oppilasLoader = 0;
+
         this.db.collection("koulutukset").get().then(function(koulutukset) {
+            oppilasLoader += koulutukset.size;
             koulutukset.forEach(function(koulutus) {
                 // doc.data() is never undefined for query doc snapshots
                 console.log(koulutus.id, " => ", koulutus.data());
+
                 self.keys.push(koulutus.id);
                 let newKoulutus = koulutus.data();
                 if(newKoulutus.osallistujat) newKoulutus.osallistujat.map(osall=>{
@@ -45,6 +81,10 @@ new Vue({
                 });
                 self.koulutukset.push(newKoulutus);
 
+                oppilasLoader--;
+                if(oppilasLoader < 1){
+                    bus.emit(UPDATE_GRID, self.oppilaat());
+                }
             });
         })
         .catch(function(error){
@@ -72,6 +112,9 @@ new Vue({
     mounted: function(){
     },  
     computed: {
+    },
+
+    methods: {
         oppilaat(){
             let ret = [];
             console.log("Koulutuksia: " + this.koulutukset.length)
@@ -80,10 +123,8 @@ new Vue({
                 koulutus.osallistujat.map(osallistuja=>ret.push(osallistuja));
             }
             return ret;
-        }
-    },
+        },
 
-    methods: {
         newKey(kouluttaja, tilaisuus, date){
             let suffix=1;
             let key = date + "_" + kouluttaja + "_" + "aihe";

@@ -75,6 +75,8 @@
                                         <div v-for="oppilas in oppilaat">
                                             {{oppilas.nimi}}
                                         </div>
+
+                                        <vue-jos-grid :data="oppilaat()" :options="oppilas_options"></vue-jos-grid>
                                     </v-card-text>
                                 </v-card>
                             </v-tab-item>
@@ -160,6 +162,7 @@
 
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+    <script src="vue-components.js"></script>
     <script src="main.js"></script>
 </body>
 
