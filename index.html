@@ -59,7 +59,7 @@
                                     </v-card-title>
                                     <v-card-text>
                                         <div v-for="koulutus in koulutukset">
-                                            <h3>{{koulutus.nimi}}
+                                            <h3>{{koulutus.kouluttaja}}
                                                 <v-btn color="primary" @click.stop="edit(koulutus)">Muokkaa</v-btn>
                                             </h3>
                                         </div>
@@ -92,10 +92,10 @@
                                     <v-text-field label="Kouluttaja" v-model="edit_koulutus.kouluttaja" :readonly="edit_dialog.readonly"></v-text-field>
                                     <v-date-picker label="Pvm" v-model="edit_koulutus.pvm" :readonly="edit_dialog.readonly"></v-date-picker>
                                     <v-text-field label="Tilaisuus" v-model="edit_koulutus.tilaisuus" :readonly="edit_dialog.readonly"></v-text-field>
-                                    <v-text-field label="Koulutuspaikka" v-model="edit_koulutus.koulutuspaikka" :readonly="edit_dialog.readonly"></v-text-field>
+                                    <v-text-field label="Koulutuspaikka" v-model="edit_koulutus.paikka" :readonly="edit_dialog.readonly"></v-text-field>
                                     <v-text-field label="Alue" v-model="edit_koulutus.alue" :readonly="edit_dialog.readonly"></v-text-field>
-                                    <v-text-field label="Huomioita" v-model="edit_koulutus.huom" :readonly="edit_dialog.readonly"></v-text-field>
-                                    {{edit_koulutus.puh}} {{edit_koulutus.paikkakunta}}
+                                    <v-text-field label="Huomioita" v-model="edit_koulutus.info" :readonly="edit_dialog.readonly"></v-text-field>
+                                    {{edit_koulutus.pvm}} {{edit_koulutus.paikka}}
 
                                     <v-btn @click="editOsallistujat(edit_koulutus)">Muokkaa osallistujia</v-btn>
 
@@ -159,9 +159,9 @@
         </v-app>
     </div>
 
-
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+    <script src="classes.js"></script>
     <script src="vue-components.js"></script>
     <script src="main.js"></script>
 </body>

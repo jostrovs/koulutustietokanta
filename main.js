@@ -14,8 +14,6 @@ var bus = new Vue({
 new Vue({
     el: '#app',
     data: {
-        id: 1,
-        
         tabs: null,
 
         snackbar: false,
@@ -75,11 +73,9 @@ new Vue({
                 console.log(koulutus.id, " => ", koulutus.data());
 
                 self.keys.push(koulutus.id);
-                let newKoulutus = koulutus.data();
-                if(newKoulutus.osallistujat) newKoulutus.osallistujat.map(osall=>{
-                    osall.id=self.id++;
-                });
-                self.koulutukset.push(newKoulutus);
+                let newKoul = koulutus.data();
+                newKoul.uid = koulutus.id;
+                self.koulutukset.push(new Koulutus(newKoul));
 
                 oppilasLoader--;
                 if(oppilasLoader < 1){
@@ -215,7 +211,7 @@ new Vue({
         },
 
         add_osallistuja(){
-            this.edit_koulutus.osallistujat.push({ id: this.id++});
+            this.edit_koulutus.osallistujat.push({ id: id++});
         },
 
         remove_osallistuja(osallistuja){
@@ -241,7 +237,7 @@ new Vue({
                 });
             } else {
                 this.db.collection("koulutukset").doc(this.edit_koulutus.uid).set({
-                    nimi: this.edit_koulutus.nimi,
+                    kouluttaja: this.edit_koulutus.kouluttaja,
                     osallistujat: this.edit_koulutus.osallistujat,
                 })
                 .then(function(){
@@ -260,10 +256,7 @@ new Vue({
             let self = this;
 
             this.edit_dialog=true;
-            this.edit_koulutus.nimi = koulutus.nimi;
-            this.edit_koulutus.puh = koulutus.puh;
-            this.edit_koulutus.paikkakunta = koulutus.paikkakunta;
-            this.edit_koulutus.osallistujat = koulutus.osallistujat;
+            this.edit_koulutus = new Koulutus(koulutus);
         },
 
         editOsallistujat(koulutus){
