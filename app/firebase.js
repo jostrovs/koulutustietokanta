@@ -79,39 +79,46 @@ class Data {
         
     }
 
-    save(koulutus, callback){
+    save(koulutus){
         let self = this;
 
-        let fb = koulutus.toFirebase();
+        return new Promise(function(resolve, reject){
+            let fb = koulutus.toFirebase();
 
-        if(!koulutus.uid){
-            this.db.collection("koulutukset").add(fb)
-            .then(function(docRef){
-                self.edit_dialog=false;
-                Bus.snackbar("Document written with ID: " + docRef.id);
-                self.koulutukset.push(new Koulutus(docRef));
-                if(callback) callback();
-            })
-            .catch(function(error) {
-                Bus.snackbar("Error adding document: "+ error);
-            });
-        } else {
-            this.db.collection("koulutukset").doc(koulutus.uid).set(fb)
-            .then(function(){
-                self.edit_dialog=false;
-                Bus.snackbar("Document succesfully written!");
-                if(callback) callback();
-            })
-            .catch(function(error) {
-                Bus.snackbar("Error writing document: "+ error);
-            });
-        }
+            if(!koulutus.uid){
+                self.db.collection("koulutukset").add(fb)
+                .then(function(docRef){
+                    self.edit_dialog=false;
+                    Bus.snackbar("Document written with ID: " + docRef.id);
+                    self.koulutukset.push(new Koulutus(docRef));
+                    resolve();
+                })
+                .catch(function(error) {
+                    Bus.snackbar("Error adding document: "+ error);
+                    reject(error);
+                });
+            } else {
+                self.db.collection("koulutukset").doc(koulutus.uid).set(fb)
+                .then(function(){
+                    self.edit_dialog=false;
+                    self.update(koulutus);
+                    Bus.snackbar("Document succesfully written!");
+                    resolve();
+                })
+                .catch(function(error) {
+                    Bus.snackbar("Error writing document: "+ error);
+                    reject(error);
+                });
+            }
+    
+        });
     }
+
 
     update(koulutus){
         // Vaihdetaan sisäisen listan tieto
         for(let i=0;i<this.koulutukset.length;++i){
-            if(this.koulutukset[i].uid == koulutus.id){
+            if(this.koulutukset[i].uid == koulutus.uid){
                 this.koulutukset[i] = koulutus;
                 return;
             }

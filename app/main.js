@@ -14,7 +14,7 @@ new Vue({
     data: {
         tabs: null,
 
-        data: Firebase.data,
+        data: {signed_in: false,},//Firebase.data, asetetaan created-metodissa
 
         snackbar: false,
         snackbar_text: "",
@@ -45,6 +45,7 @@ new Vue({
     },
     created(){
         let self=this;
+        this.data = Firebase.data;
 
         Bus.on(Bus.SNACKBAR, function(msg){
             self.snackbar_text = msg;
@@ -112,9 +113,9 @@ new Vue({
 
         save(koulutus){
             let self = this;
-            this.data.save(koulutus, function(){
+            this.data.save(koulutus).then(function(){
                 self.edit_dialog = false;
-            })
+            });
         },
 
         editOsallistujat(koulutus){
