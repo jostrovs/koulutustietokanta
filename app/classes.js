@@ -37,3 +37,8 @@ class Koulutus {
         if(!this.id) this.id = id++;
     }
 }
+
+module.exports = {
+    Osallistuja: Osallistuja,
+    Koulutus: Koulutus
+}

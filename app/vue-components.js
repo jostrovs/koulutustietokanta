@@ -1,4 +1,4 @@
-
+module.exports="compo";
 
 Vue.component('vue-jos-grid', {
     template: `

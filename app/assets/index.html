@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koulutustietokanta</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet" type="text/css">
+    <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet" type="text/css"></link>
+    <link href="styles.css" rel="stylesheet" type="text/css">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+
+    <script src="lib/moment.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-messaging.js"></script>
+
+    <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
+
+
+</head>
+
+<body>
+    <div id="app">
+        
+        <v-app>
+            <main>
+                <v-content>
+                    <v-container>
+                        <v-snackbar :timeout="5100" v-model="snackbar">
+                            {{snackbar_text}}
+                            <v-btn flat color="pink" @click.native="snackbar = false">Close</v-btn>
+                        </v-snackbar>
+
+                        <v-tabs v-model="tabs" color="cyan" dark slider-color="yellow">
+                            <v-tab key="3">User</v-tab>
+                            <v-tab key="1">Koulutukset</v-tab>
+                            <v-tab key="2">Koulutetut</v-tab>
+                            
+                            <v-tab-item key="3">
+                                <h1>Koulutustietokanta</h1>
+                                <div v-if="data.signed_in" class="body-1">User: {{data.user.displayName}} uid: {{data.user.uid}}
+                                    <v-btn small @click="sign_out()">Kirjaudu ulos</>
+                                </div>
+                                <div v-show="!data.signed_in">
+                                    <div id="firebaseui-auth-container"></div>
+                                </div>
+                            </v-tab-item>
+
+                            <v-tab-item key="1">
+                                <v-card class="ma-2">
+                                    <v-card-title primary-title>
+                                        <h2>Koulutukset</h2>
+                                        <v-btn color="primary" @click="addKoulutus()">Lisää</v-btn>
+                                    </v-card-title>
+                                    <v-card-text>
+                                        <div v-for="koulutus in data.koulutukset">
+                                            <h3>{{koulutus.kouluttaja}}
+                                                <v-btn color="primary" @click.stop="edit(koulutus)">Muokkaa</v-btn>
+                                            </h3>
+                                        </div>
+                                    </v-card-text>
+                                </v-card>
+                            </v-tab-item>
+                            <v-tab-item key="2">
+                                <v-card class="ma-2">
+                                    <v-card-title primary-title>
+                                        <h2>Koulutetut</h2>
+                                    </v-card-title>
+                                    <v-card-text>
+                                        <div v-for="oppilas in oppilaat">
+                                            {{oppilas.nimi}}
+                                        </div>
+
+                                        <vue-jos-grid :data="oppilaat()" :options="oppilas_options"></vue-jos-grid>
+                                    </v-card-text>
+                                </v-card>
+                            </v-tab-item>
+
+                        </v-tabs>
+
+                        <v-dialog :overlay="false" scrollable v-model="edit_dialog">
+                            <v-card>
+                                <v-card-title primary-title>
+                                    <h2>Muokkaa koulutusta - {{edit_koulutus.nimi}}</h2>
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-text-field label="Kouluttaja" v-model="edit_koulutus.kouluttaja" :readonly="edit_dialog.readonly"></v-text-field>
+                                    <v-date-picker label="Pvm" v-model="edit_koulutus.pvm" :readonly="edit_dialog.readonly"></v-date-picker>
+                                    <v-text-field label="Tilaisuus" v-model="edit_koulutus.tilaisuus" :readonly="edit_dialog.readonly"></v-text-field>
+                                    <v-text-field label="Koulutuspaikka" v-model="edit_koulutus.paikka" :readonly="edit_dialog.readonly"></v-text-field>
+                                    <v-text-field label="Alue" v-model="edit_koulutus.alue" :readonly="edit_dialog.readonly"></v-text-field>
+                                    <v-text-field label="Huomioita" v-model="edit_koulutus.info" :readonly="edit_dialog.readonly"></v-text-field>
+                                    {{edit_koulutus.pvm}} {{edit_koulutus.paikka}}
+
+                                    <v-btn @click="editOsallistujat(edit_koulutus)">Muokkaa osallistujia</v-btn>
+
+                                    <table>
+                                        <tr v-for="osallistuja in edit_koulutus.osallistujat">
+                                            <td>{{osallistuja.nimi}}</td>
+                                            <td>{{osallistuja.id}}</td>
+                                        </tr>
+                                    </table>
+                                </v-card-text>
+                                <v-card-actions>
+                                    <v-btn color="primary" @click.stop="save(edit_koulutus)">Talleta</v-btn>
+                                    <v-btn @click.stop="edit_dialog=false">Sulje</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+
+                        <v-dialog :overlay="true" scrollable v-model="osallistujat_dialog">
+                            <v-card>
+                                <v-card-title primary-title>
+                                    <h2>Koulutuksen osallistujat - {{edit_koulutus.nimi}}</h2>
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-btn color="primary" @click="add_osallistuja()">
+                                        <v-icon>add</v-icon>Lisää
+                                    </v-btn>
+                                </v-card-text>
+                                <v-card-text>
+                                    <table>
+                                        <tr>
+                                            <th>Nimi</th>
+                                            <th>Uid</th>
+                                            <th>Email</th>
+                                            <th>Paikkakunta</th>
+                                            <th>Postinumero</th>
+                                            <th>Syntymävuosi</th>
+                                            <th></th>
+                                        </tr>
+                                        <tr v-for="osallistuja in edit_koulutus.osallistujat">
+                                            <td><input type="text" placeholder="Nimi" v-model=osallistuja.nimi></td>
+                                            <td>{{osallistuja.id}}</td>
+                                            <td><input type="text" placeholder="Email" v-model=osallistuja.email></td>
+                                            <td><input type="text" placeholder="Paikkakunta" v-model=osallistuja.paikkakunta></td>
+                                            <td><input type="text" placeholder="Postinumero" v-model=osallistuja.postinumero></td>
+                                            <td><input type="text" placeholder="Syntymävuosi" v-model=osallistuja.vuosi></td>
+                                            <td>
+                                                <v-icon @click="remove_osallistuja(osallistuja)">delete</v-icon>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </v-card-text>
+                                <v-card-actions>
+                                    <v-btn color="primary" @click.stop="osallistujat_dialog=false">Close</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+
+                    </v-container>
+                </v-content>
+            </main>
+        </v-app>
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

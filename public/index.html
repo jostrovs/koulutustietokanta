@@ -11,6 +11,8 @@
     <link href="styles.css" rel="stylesheet" type="text/css">
     <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
 
+    <script src="lib/moment.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-auth.js"></script>
@@ -26,6 +28,7 @@
 
 <body>
     <div id="app">
+        
         <v-app>
             <main>
                 <v-content>
@@ -42,13 +45,12 @@
                             
                             <v-tab-item key="3">
                                 <h1>Koulutustietokanta</h1>
-                                <div v-if="signed_in" class="body-1">User: {{user.displayName}} uid: {{user.uid}}
+                                <div v-if="data.signed_in" class="body-1">User: {{data.user.displayName}} uid: {{data.user.uid}}
                                     <v-btn small @click="sign_out()">Kirjaudu ulos</>
                                 </div>
-                                <div v-show="!signed_in">
+                                <div v-show="!data.signed_in">
                                     <div id="firebaseui-auth-container"></div>
                                 </div>
-        
                             </v-tab-item>
 
                             <v-tab-item key="1">
@@ -58,7 +60,7 @@
                                         <v-btn color="primary" @click="addKoulutus()">Lisää</v-btn>
                                     </v-card-title>
                                     <v-card-text>
-                                        <div v-for="koulutus in koulutukset">
+                                        <div v-for="koulutus in data.koulutukset">
                                             <h3>{{koulutus.kouluttaja}}
                                                 <v-btn color="primary" @click.stop="edit(koulutus)">Muokkaa</v-btn>
                                             </h3>
@@ -161,9 +163,7 @@
 
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
-    <script src="classes.js"></script>
-    <script src="vue-components.js"></script>
-    <script src="main.js"></script>
+    <script src="app.js"></script>
 </body>
 
 </html>
