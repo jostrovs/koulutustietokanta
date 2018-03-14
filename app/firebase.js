@@ -1,7 +1,9 @@
+var Bus = require("bus");
 var Classes = require("classes");
 var Osallistuja = Classes.Osallistuja;
 var Koulutus = Classes.Koulutus;
 
+let id=1;
 
 class Data {
     
@@ -19,6 +21,18 @@ class Data {
 
         this.keys = [];
 
+    }
+
+    oppilaat(){
+        let ret = [];
+        for(let i=0; i<this.koulutukset.length;++i){
+            let koulutus = this.koulutukset[i];
+            for(let j=0;j<koulutus.osallistujat.length;++j){
+                ret.push(koulutus.osallistujat[j]);
+            }
+        }
+
+        return ret;
     }
 
     getData(){
@@ -41,14 +55,12 @@ class Data {
 
                 oppilasLoader--;
                 if(oppilasLoader < 1){
-                    bus.emit(UPDATE_GRID, self.oppilaat());
+                    Bus.emit(Bus.UPDATE_GRID, self.oppilaat());
                 }
             });
         })
         .catch(function(error){
-            console.log("Koulutusten haku epäonnistui: " + error);
-            self.snackbar_text = "Koulutusten haku epäonnistui: " + error;
-            self.snackbar = true;
+            Bus.snackbar("Koulutusten haku epäonnistui: " + error);
         });           
         self.loading--;
 
@@ -61,12 +73,49 @@ class Data {
             });
         })
         .catch(function(error){
-            console.log("Käyttäjien haku epäonnistui: " + error);
-            self.snackbar_text = "Käyttäjien haku epäonnistui: " + error;
-            self.snackbar = true;
+            Bus.snackbar("Käyttäjien haku epäonnistui: " + error);
         });           
         self.loading--;
         
+    }
+
+    save(koulutus, callback){
+        let self = this;
+
+        let fb = koulutus.toFirebase();
+
+        if(!koulutus.uid){
+            this.db.collection("koulutukset").add(fb)
+            .then(function(docRef){
+                self.edit_dialog=false;
+                Bus.snackbar("Document written with ID: " + docRef.id);
+                self.koulutukset.push(new Koulutus(docRef));
+                if(callback) callback();
+            })
+            .catch(function(error) {
+                Bus.snackbar("Error adding document: "+ error);
+            });
+        } else {
+            this.db.collection("koulutukset").doc(koulutus.uid).set(fb)
+            .then(function(){
+                self.edit_dialog=false;
+                Bus.snackbar("Document succesfully written!");
+                if(callback) callback();
+            })
+            .catch(function(error) {
+                Bus.snackbar("Error writing document: "+ error);
+            });
+        }
+    }
+
+    update(koulutus){
+        // Vaihdetaan sisäisen listan tieto
+        for(let i=0;i<this.koulutukset.length;++i){
+            if(this.koulutukset[i].uid == koulutus.id){
+                this.koulutukset[i] = koulutus;
+                return;
+            }
+        }
     }
 
     initFirebase(){

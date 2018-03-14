@@ -147,53 +147,149 @@ var __makeRelativeRequire = function(require, mappings, pref) {
     return require(name);
   }
 };
-require.register("classes.js", function(exports, require, module) {
+require.register("bus.js", function(exports, require, module) {
 "use strict";
+
+var bus = new Vue({
+    methods: {
+        on: function on(event, callback) {
+            this.$on(event, callback);
+        },
+        emit: function emit(event, payload) {
+            this.$emit(event, payload);
+        }
+    }
+});
+
+var SNACKBAR = "SNACKBAR";
+var UPDATE_GRID = "UPDATE_GRID";
+var DOC_SAVED = "DOC SAVED";
+
+function snackbar(message) {
+    console.log(message);
+    bus.emit(SNACKBAR, message);
+}
+
+module.exports = {
+    bus: bus,
+    UPDATE_GRID: UPDATE_GRID,
+    DOC_SAVED: DOC_SAVED,
+    SNACKBAR: SNACKBAR,
+    on: function on(event, callback) {
+        bus.on(event, callback);
+    },
+    emit: function emit(event, payload) {
+        bus.emit(event, payload);
+    },
+    snackbar: snackbar
+};
+});
+
+;require.register("classes.js", function(exports, require, module) {
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var id = 1;
 
-var Osallistuja = function Osallistuja() {
-    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+var Osallistuja = function () {
+    function Osallistuja() {
+        var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-    _classCallCheck(this, Osallistuja);
+        _classCallCheck(this, Osallistuja);
 
-    if (obj) {
-        this.id = obj.id;
-        this.nimi = obj.nimi;
-        this.postino = obj.postino;
-        this.paikka = obj.paikka;
-        this.vuosi = obj.vuosi;
-        this.email = obj.email;
+        this.luokka = "Osallistuja";
+        if (obj) {
+            this.id = obj.id;
+            this.nimi = obj.nimi;
+            this.postino = obj.postino;
+            this.paikka = obj.paikka;
+            this.vuosi = obj.vuosi;
+            this.email = obj.email;
+        }
+
+        if (this.id < 1) this.id = id++;
     }
 
-    if (this.id < 1) this.id = id++;
-};
+    _createClass(Osallistuja, [{
+        key: "toFirebase",
+        value: function toFirebase() {
+            var ret = {};
+            ret.nimi = this.nimi ? this.nimi.toString() : "<puuttuu>";
+            ret.postino = this.postino ? this.postino : "";
+            ret.vuosi = this.vuosi ? this.vuosi : "";
+            ret.paikka = this.paikka ? this.paikka : "";
+            ret.email = this.email ? this.email : "";
+            ret.huom = this.huom ? this.email : "";
 
-var Koulutus = function Koulutus() {
-    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+            return ret;
+        }
+    }]);
 
-    _classCallCheck(this, Koulutus);
+    return Osallistuja;
+}();
 
-    if (obj) {
-        this.uid = obj.uid;
-        this.id = obj.id;
-        this.kouluttaja = obj.kouluttaja;
-        this.tilaisuus = obj.tilaisuus;
-        this.pvm = obj.pvm;
-        this.paikka = obj.paikka;
-        this.alue = obj.alue;
-        this.info = obj.info;
-        this.lkm = obj.lkm;
-        this.osallistujat = obj.osallistujat;
-        if (this.osallistujat) this.osallistujat.map(function (osall) {
-            osall.id = id++;
-        });
+var Koulutus = function () {
+    function Koulutus() {
+        var _this = this;
+
+        var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+        _classCallCheck(this, Koulutus);
+
+        if (obj) {
+            this.uid = obj.uid;
+            this.id = obj.id;
+            this.kouluttaja = obj.kouluttaja;
+            this.tilaisuus = obj.tilaisuus;
+            this.pvm = obj.pvm;
+            this.paikka = obj.paikka;
+            this.alue = obj.alue;
+            this.info = obj.info;
+            this.lkm = obj.lkm;
+            this.osallistujat = [];
+            if (obj.osallistujat) obj.osallistujat.map(function (osall) {
+                _this.osallistujat.push(new Osallistuja(osall));
+            });
+        }
+
+        if (!this.osallistujat) this.osallistujat = [];
+
+        if (!this.id) this.id = id++;
+
+        this.title = this.tilaisuus + "_" + this.pvm;
     }
 
-    if (!this.id) this.id = id++;
-};
+    _createClass(Koulutus, [{
+        key: "create",
+        value: function create() {
+            this.osallistujat.push(new Osallistuja({ id: id++ }));
+        }
+    }, {
+        key: "toFirebase",
+        value: function toFirebase() {
+            var ret = {};
+
+            ret.kouluttaja = this.kouluttaja ? this.kouluttaja : "<puuttuu>";
+            ret.tilaisuus = this.tilaisuus ? this.tilaisuus : "<puuttuu>";
+            ret.pvm = this.pvm ? this.pvm : "1999.01.01";
+            ret.paikka = this.paikka ? this.paikka : "";
+            ret.alue = this.alue ? this.alue : "";
+            ret.info = this.info ? this.info : "";
+            ret.lkm = this.lkm ? this.lkm : this.osallistujat.length;
+
+            ret.osallistujat = this.osallistujat.map(function (osall) {
+                return osall.toFirebase();
+            });
+
+            return ret;
+        }
+    }]);
+
+    return Koulutus;
+}();
 
 module.exports = {
     Osallistuja: Osallistuja,
@@ -208,9 +304,12 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Bus = require("bus");
 var Classes = require("classes");
 var Osallistuja = Classes.Osallistuja;
 var Koulutus = Classes.Koulutus;
+
+var id = 1;
 
 var Data = function () {
     function Data() {
@@ -231,6 +330,19 @@ var Data = function () {
     }
 
     _createClass(Data, [{
+        key: "oppilaat",
+        value: function oppilaat() {
+            var ret = [];
+            for (var i = 0; i < this.koulutukset.length; ++i) {
+                var koulutus = this.koulutukset[i];
+                for (var j = 0; j < koulutus.osallistujat.length; ++j) {
+                    ret.push(koulutus.osallistujat[j]);
+                }
+            }
+
+            return ret;
+        }
+    }, {
         key: "getData",
         value: function getData() {
             var self = this;
@@ -252,13 +364,11 @@ var Data = function () {
 
                     oppilasLoader--;
                     if (oppilasLoader < 1) {
-                        bus.emit(UPDATE_GRID, self.oppilaat());
+                        Bus.emit(Bus.UPDATE_GRID, self.oppilaat());
                     }
                 });
             }).catch(function (error) {
-                console.log("Koulutusten haku epäonnistui: " + error);
-                self.snackbar_text = "Koulutusten haku epäonnistui: " + error;
-                self.snackbar = true;
+                Bus.snackbar("Koulutusten haku epäonnistui: " + error);
             });
             self.loading--;
 
@@ -270,11 +380,46 @@ var Data = function () {
                     self.users.push(user.data());
                 });
             }).catch(function (error) {
-                console.log("Käyttäjien haku epäonnistui: " + error);
-                self.snackbar_text = "Käyttäjien haku epäonnistui: " + error;
-                self.snackbar = true;
+                Bus.snackbar("Käyttäjien haku epäonnistui: " + error);
             });
             self.loading--;
+        }
+    }, {
+        key: "save",
+        value: function save(koulutus, callback) {
+            var self = this;
+
+            var fb = koulutus.toFirebase();
+
+            if (!koulutus.uid) {
+                this.db.collection("koulutukset").add(fb).then(function (docRef) {
+                    self.edit_dialog = false;
+                    Bus.snackbar("Document written with ID: " + docRef.id);
+                    self.koulutukset.push(new Koulutus(docRef));
+                    if (callback) callback();
+                }).catch(function (error) {
+                    Bus.snackbar("Error adding document: " + error);
+                });
+            } else {
+                this.db.collection("koulutukset").doc(koulutus.uid).set(fb).then(function () {
+                    self.edit_dialog = false;
+                    Bus.snackbar("Document succesfully written!");
+                    if (callback) callback();
+                }).catch(function (error) {
+                    Bus.snackbar("Error writing document: " + error);
+                });
+            }
+        }
+    }, {
+        key: "update",
+        value: function update(koulutus) {
+            // Vaihdetaan sisäisen listan tieto
+            for (var i = 0; i < this.koulutukset.length; ++i) {
+                if (this.koulutukset[i].uid == koulutus.id) {
+                    this.koulutukset[i] = koulutus;
+                    return;
+                }
+            }
         }
     }, {
         key: "initFirebase",
@@ -360,22 +505,10 @@ module.exports = {
 var Components = require("vue-components");
 var Classes = require("classes");
 var Firebase = require("firebase");
+var Bus = require("bus");
 
 var Osallistuja = Classes.Osallistuja;
 var Koulutus = Classes.Koulutus;
-
-var UPDATE_GRID = "UPDATE_GRID";
-
-var bus = new Vue({
-    methods: {
-        on: function on(event, callback) {
-            this.$on(event, callback);
-        },
-        emit: function emit(event, payload) {
-            this.$emit(event, payload);
-        }
-    }
-});
 
 new Vue({
     el: '#app',
@@ -391,7 +524,7 @@ new Vue({
         users: [],
 
         edit_dialog: false,
-        edit_koulutus: { osallistujat: [] },
+        edit_koulutus: new Koulutus(),
 
         osallistujat_dialog: false,
         oppilas_options: {
@@ -401,13 +534,20 @@ new Vue({
             columnFilters: true,
 
             onCreated: function onCreated(component) {
-                bus.on(UPDATE_GRID, function (data) {
+                Bus.on(Bus.UPDATE_GRID, function (data) {
                     component.setData(data);
                 });
             }
         }
     },
-    created: function created() {},
+    created: function created() {
+        var self = this;
+
+        Bus.on(Bus.SNACKBAR, function (msg) {
+            self.snackbar_text = msg;
+            self.snackbar = true;
+        });
+    },
 
     mounted: function mounted() {},
     computed: {},
@@ -480,40 +620,17 @@ new Vue({
                 return osall.id !== osallistuja.id;
             });
         },
-        save: function save(koulutus) {
-            var self = this;
-
-            if (!koulutus.uid) {
-                this.db.collection("koulutukset").add({
-                    nimi: this.edit_koulutus.nimi,
-                    osallistujat: this.edit_koulutus.osallistujat
-                }).then(function (docRef) {
-                    self.edit_dialog = false;
-                    self.snackbar_text = "Document written with ID: " + docRef.id;
-                    self.snackbar = true;
-                }).catch(function (error) {
-                    self.snackbar_text = "Error adding document: " + error;
-                    self.snackbar = true;
-                });
-            } else {
-                this.db.collection("koulutukset").doc(this.edit_koulutus.uid).set({
-                    kouluttaja: this.edit_koulutus.kouluttaja,
-                    osallistujat: this.edit_koulutus.osallistujat
-                }).then(function () {
-                    self.edit_dialog = false;
-                    self.snackbar_text = "Document succesfully written!";
-                    self.snackbar = true;
-                }).catch(function (error) {
-                    self.snackbar_text = "Error writing document: " + error;
-                    self.snackbar = true;
-                });
-            }
-        },
         edit: function edit(koulutus) {
             var self = this;
 
             this.edit_dialog = true;
             this.edit_koulutus = new Koulutus(koulutus);
+        },
+        save: function save(koulutus) {
+            var self = this;
+            this.data.save(koulutus, function () {
+                self.edit_dialog = false;
+            });
         },
         editOsallistujat: function editOsallistujat(koulutus) {
             this.osallistujat_dialog = true;

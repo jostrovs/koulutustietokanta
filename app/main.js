@@ -1,23 +1,13 @@
 var Components = require("vue-components");
 var Classes = require("classes");
 var Firebase = require("firebase");
+var Bus = require("bus");
 
 var Osallistuja = Classes.Osallistuja;
 var Koulutus = Classes.Koulutus;
 
 
-const UPDATE_GRID = "UPDATE_GRID";
 
-var bus = new Vue({
-    methods: {
-        on: function(event, callback){
-            this.$on(event, callback);
-        },
-        emit: function(event, payload){
-            this.$emit(event, payload);
-        }
-    }
-});
 
 new Vue({
     el: '#app',
@@ -33,7 +23,7 @@ new Vue({
         users: [],
 
         edit_dialog: false,
-        edit_koulutus: { osallistujat: []},
+        edit_koulutus: new Koulutus(),
 
         osallistujat_dialog: false,
         oppilas_options: {
@@ -47,13 +37,19 @@ new Vue({
             columnFilters: true,
 
             onCreated: function(component){
-                bus.on(UPDATE_GRID, function(data){
+                Bus.on(Bus.UPDATE_GRID, function(data){
                     component.setData(data);
                 })
             },
         },
     },
     created(){
+        let self=this;
+
+        Bus.on(Bus.SNACKBAR, function(msg){
+            self.snackbar_text = msg;
+            self.snackbar = true;
+        })
     },
     mounted: function(){
     },  
@@ -106,45 +102,19 @@ new Vue({
             this.edit_koulutus.osallistujat = this.edit_koulutus.osallistujat.filter(osall=>{ return osall.id !== osallistuja.id;});
         },
 
-        save(koulutus){
-            let self = this;
-
-            if(!koulutus.uid){
-                this.db.collection("koulutukset").add({
-                    nimi: this.edit_koulutus.nimi,
-                    osallistujat: this.edit_koulutus.osallistujat,
-                })
-                .then(function(docRef){
-                    self.edit_dialog=false;
-                    self.snackbar_text = "Document written with ID: " + docRef.id;
-                    self.snackbar=true;
-                })
-                .catch(function(error) {
-                    self.snackbar_text="Error adding document: "+ error;
-                    self.snackbar=true;
-                });
-            } else {
-                this.db.collection("koulutukset").doc(this.edit_koulutus.uid).set({
-                    kouluttaja: this.edit_koulutus.kouluttaja,
-                    osallistujat: this.edit_koulutus.osallistujat,
-                })
-                .then(function(){
-                    self.edit_dialog=false;
-                    self.snackbar_text="Document succesfully written!";
-                    self.snackbar=true;
-                })
-                .catch(function(error) {
-                    self.snackbar_text="Error writing document: "+ error;
-                    self.snackbar=true;
-                });
-            }
-        },
 
         edit(koulutus){
             let self = this;
 
             this.edit_dialog=true;
             this.edit_koulutus = new Koulutus(koulutus);
+        },
+
+        save(koulutus){
+            let self = this;
+            this.data.save(koulutus, function(){
+                self.edit_dialog = false;
+            })
         },
 
         editOsallistujat(koulutus){

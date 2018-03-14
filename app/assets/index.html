@@ -51,6 +51,7 @@
                                 <div v-show="!data.signed_in">
                                     <div id="firebaseui-auth-container"></div>
                                 </div>
+                                <div style="font-size: 20px; border: 2px solid red;">Muokattu koulutus ei päivity ruutuun. Sama ongelma kuin gridillä?</div>
                             </v-tab-item>
 
                             <v-tab-item key="1">
@@ -88,15 +89,23 @@
                         <v-dialog :overlay="false" scrollable v-model="edit_dialog">
                             <v-card>
                                 <v-card-title primary-title>
-                                    <h2>Muokkaa koulutusta - {{edit_koulutus.nimi}}</h2>
+                                    <h2>Muokkaa koulutusta - {{edit_koulutus.title}}</h2>
                                 </v-card-title>
                                 <v-card-text>
-                                    <v-text-field label="Kouluttaja" v-model="edit_koulutus.kouluttaja" :readonly="edit_dialog.readonly"></v-text-field>
-                                    <v-date-picker label="Pvm" v-model="edit_koulutus.pvm" :readonly="edit_dialog.readonly"></v-date-picker>
-                                    <v-text-field label="Tilaisuus" v-model="edit_koulutus.tilaisuus" :readonly="edit_dialog.readonly"></v-text-field>
-                                    <v-text-field label="Koulutuspaikka" v-model="edit_koulutus.paikka" :readonly="edit_dialog.readonly"></v-text-field>
-                                    <v-text-field label="Alue" v-model="edit_koulutus.alue" :readonly="edit_dialog.readonly"></v-text-field>
-                                    <v-text-field label="Huomioita" v-model="edit_koulutus.info" :readonly="edit_dialog.readonly"></v-text-field>
+                                    <v-container fluid>
+                                        <v-layout>
+                                            <v-text-field xs2 required label="Pvm" v-model="edit_koulutus.pvm" :readonly="edit_dialog.readonly"></v-text-field> &nbsp;&nbsp;
+                                            <v-text-field xs2 required label="Kouluttaja" v-model="edit_koulutus.kouluttaja" :readonly="edit_dialog.readonly"></v-text-field>&nbsp;&nbsp;
+                                            <v-text-field xs2 required label="Tilaisuus" v-model="edit_koulutus.tilaisuus" :readonly="edit_dialog.readonly"></v-text-field>
+                                        </v-layout>
+                                        <v-layout row>
+                                            <v-text-field xs2 label="Koulutuspaikka" v-model="edit_koulutus.paikka" :readonly="edit_dialog.readonly"></v-text-field>&nbsp;&nbsp;
+                                            <v-text-field xs2 label="Alue" v-model="edit_koulutus.alue" :readonly="edit_dialog.readonly"></v-text-field>
+                                        </v-layout>
+                                        <v-layout row>
+                                            <v-text-field xs5 label="Huomioita" v-model="edit_koulutus.info" :readonly="edit_dialog.readonly"></v-text-field>
+                                        </v-layout>
+                                    </v-container>
                                     {{edit_koulutus.pvm}} {{edit_koulutus.paikka}}
 
                                     <v-btn @click="editOsallistujat(edit_koulutus)">Muokkaa osallistujia</v-btn>
@@ -118,10 +127,10 @@
                         <v-dialog :overlay="true" scrollable v-model="osallistujat_dialog">
                             <v-card>
                                 <v-card-title primary-title>
-                                    <h2>Koulutuksen osallistujat - {{edit_koulutus.nimi}}</h2>
+                                    <h2>Koulutuksen osallistujat - {{edit_koulutus.title}}</h2>
                                 </v-card-title>
                                 <v-card-text>
-                                    <v-btn color="primary" @click="add_osallistuja()">
+                                    <v-btn color="primary" @click="edit_koulutus.create()">
                                         <v-icon>add</v-icon>Lisää
                                     </v-btn>
                                 </v-card-text>
