@@ -51,7 +51,6 @@
                                 <div v-show="!data.signed_in">
                                     <div id="firebaseui-auth-container"></div>
                                 </div>
-                                <div style="font-size: 20px; border: 2px solid red;">Muokattu koulutus ei päivity ruutuun. Sama ongelma kuin gridillä?</div>
                             </v-tab-item>
 
                             <v-tab-item key="1">
@@ -61,10 +60,18 @@
                                         <v-btn color="primary" @click="addKoulutus()">Lisää</v-btn>
                                     </v-card-title>
                                     <v-card-text>
-                                        <div v-for="koulutus in data.koulutukset">
-                                            <h3>{{koulutus.kouluttaja}}
-                                                <v-btn color="primary" @click.stop="edit(koulutus)">Muokkaa</v-btn>
-                                            </h3>
+                                        <div style="display: flex">
+                                            <div style="flex: 1; font-weight: bold">Pvm</div>
+                                            <div style="flex: 1; font-weight: bold">Tilaisuus</div>
+                                            <div style="flex: 1; font-weight: bold">Kouluttaja</div>
+                                            <div style="flex: 1; font-weight: bold">Tools</div>
+                                        </div>
+                                        <div v-for="koulutus in data.koulutukset" style="display: flex">
+                                            <div style="flex: 1">{{koulutus.pvm}}</div>
+                                            <div style="flex: 1">{{koulutus.tilaisuus}}</div>
+                                            <div style="flex: 1">{{koulutus.kouluttaja}}</div>
+                                            <div style="flex: 1"><v-btn color="primary" @click.stop="edit(koulutus)">Muokkaa</v-btn></div>
+                                            
                                         </div>
                                     </v-card-text>
                                 </v-card>
@@ -89,7 +96,8 @@
                         <v-dialog :overlay="false" scrollable v-model="edit_dialog">
                             <v-card>
                                 <v-card-title primary-title>
-                                    <h2>Muokkaa koulutusta - {{edit_koulutus.title}}</h2>
+                                    <h2 v-if="edit_koulutus.isNew">Uusi koulutus</h2>
+                                    <h2 v-else>Muokkaa koulutusta - {{edit_koulutus.title}}</h2>
                                 </v-card-title>
                                 <v-card-text>
                                     <v-container fluid>

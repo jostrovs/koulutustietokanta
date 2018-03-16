@@ -8,7 +8,6 @@ var Koulutus = Classes.Koulutus;
 
 
 
-
 new Vue({
     el: '#app',
     data: {
@@ -23,7 +22,7 @@ new Vue({
         users: [],
 
         edit_dialog: false,
-        edit_koulutus: new Koulutus(),
+        edit_koulutus: {},
 
         osallistujat_dialog: false,
         oppilas_options: {
@@ -68,26 +67,8 @@ new Vue({
             return ret;
         },
 
-        newKey(kouluttaja, tilaisuus, date){
-            let suffix=1;
-            let key = date + "_" + kouluttaja + "_" + "aihe";
-            while(this.keys.indexOf(key + "_" + suffix) >= 0){
-                suffix++;
-            }
-
-            return key + "_" + suffix;
-        },
-        
-
         addKoulutus(){
-            
-            let key = this.newKey("Esko Hannula", "Peruskurssi", "2018.03.03");
-            this.db.collection("koulutukset").doc(key).set({
-                kouluttaja: "Esko Hannula",
-                tilaisuus: "Peruskurssi",
-                date: "2018.03.03",
-            }).then(function(){location.reload()});
-
+            this.edit(new Koulutus());
         },
 
         sign_out(){

@@ -85,34 +85,39 @@ class Data {
         return new Promise(function(resolve, reject){
             let fb = koulutus.toFirebase();
 
-            if(!koulutus.uid){
-                self.db.collection("koulutukset").add(fb)
-                .then(function(docRef){
-                    self.edit_dialog=false;
-                    Bus.snackbar("Document written with ID: " + docRef.id);
-                    self.koulutukset.push(new Koulutus(docRef));
-                    resolve();
-                })
-                .catch(function(error) {
-                    Bus.snackbar("Error adding document: "+ error);
-                    reject(error);
-                });
-            } else {
-                self.db.collection("koulutukset").doc(koulutus.uid).set(fb)
-                .then(function(){
-                    self.edit_dialog=false;
-                    self.update(koulutus);
-                    Bus.snackbar("Document succesfully written!");
-                    resolve();
-                })
-                .catch(function(error) {
-                    Bus.snackbar("Error writing document: "+ error);
-                    reject(error);
-                });
+            let uid = koulutus.uid;
+            if(!uid){
+                uid = self.newUid(fb);
             }
+
+            self.db.collection("koulutukset").doc(uid).set(fb)
+            .then(function(docRef){
+                self.edit_dialog=false;
+                self.update(koulutus);
+                let oppil = self.oppilaat();
+                Bus.emit(Bus.UPDATE_GRID, oppil);
+                Bus.snackbar("Document succesfully written! (id:" + uid + ")");
+                resolve();
+            })
+            .catch(function(error) {
+                Bus.snackbar("Error writing document: "+ error);
+                reject(error);
+            });
     
         });
     }
+
+    newUid(koulutus){
+        let suffix=1;
+        let uid = koulutus.pvm + "_" + koulutus.kouluttaja + "_" + koulutus.tilaisuus;
+        while(this.koulutukset.filter(it=>it.uid == uid + "_suffix").length > 0){
+            suffix++;
+        }
+
+        return uid + "_" + suffix;
+    }
+    
+
 
 
     update(koulutus){
@@ -123,6 +128,9 @@ class Data {
                 return;
             }
         }
+
+        // Ei löytynyt; lisätään.
+        this.koulutukset.push(koulutus);
     }
 
     initFirebase(){

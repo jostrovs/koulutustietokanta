@@ -52,6 +52,10 @@ class Koulutus {
         if(!this.id) this.id = id++;
 
         this.title = this.tilaisuus + "_" + this.pvm;
+        if(!this.tilaisuus && !this.pvm){
+            this.title = "<uusi koulutus>";
+            this.isNew = true;
+        }
     }
 
     create(){
