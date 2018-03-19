@@ -8,6 +8,8 @@ let id=1;
 class Data {
     
     constructor(){
+        this.maxkey=0;
+
         this.signed_in = false;
         
         this.koulutukset = [];
@@ -18,8 +20,6 @@ class Data {
 
         this.initFirebase();
         this.initFirebaseUi();
-
-        this.keys = [];
 
     }
 
@@ -47,8 +47,8 @@ class Data {
             koulutukset.forEach(function(koulutus) {
                 // doc.data() is never undefined for query doc snapshots
                 console.log(koulutus.id, " => ", koulutus.data());
+                self.handleMaxkey(koulutus.id);
 
-                self.keys.push(koulutus.id);
                 let newKoul = koulutus.data();
                 newKoul.uid = koulutus.id;
                 self.koulutukset.push(new Koulutus(newKoul));
@@ -108,18 +108,16 @@ class Data {
     }
 
     newUid(koulutus){
-        let suffix=1;
-        let uid = koulutus.pvm + "_" + koulutus.kouluttaja + "_" + koulutus.tilaisuus;
-        while(this.koulutukset.filter(it=>it.uid == uid + "_suffix").length > 0){
-            suffix++;
+        this.maxkey++;
+        return this.maxkey.toString();
+    }
+    handleMaxkey(id){
+        let i = parseInt(id, 10);
+        if(i > this.maxkey){
+            this.maxkey = i;
         }
-
-        return uid + "_" + suffix;
     }
     
-
-
-
     update(koulutus){
         // Vaihdetaan sisäisen listan tieto
         for(let i=0;i<this.koulutukset.length;++i){
