@@ -13,7 +13,9 @@ new Vue({
     data: {
         tabs: null,
 
-        data: {signed_in: false,},//Firebase.data, asetetaan created-metodissa
+        data: {
+            signed_in: false 
+        },//Firebase.data, asetetaan created-metodissa
 
         snackbar: false,
         snackbar_text: "",
@@ -27,7 +29,8 @@ new Vue({
         osallistujat_dialog: false,
         oppilas_options: {
             columns: [
-                { title: 'Nimi', width: "50%", key: 'nimi' },
+                { title: 'Nimi', width: "20%", key: 'nimi' },
+                { title: 'Tilaisuus', width: "20%", key: 'tilaisuus' },
                 { title: 'Vuosi', width: "10%", key: 'vuosi' },
                 { title: 'Email', width: "10%", key: 'email' },
                 { title: 'PostiNo', width: "10%", key: 'postino' },
@@ -61,15 +64,9 @@ new Vue({
 
     methods: {
         oppilaat(){
-            let ret = [];
-            console.log("Koulutuksia: " + this.koulutukset.length)
-            for(let koulutus of this.koulutukset){
-                if(!koulutus.osallistujat) continue;
-                koulutus.osallistujat.map(osallistuja=>ret.push(osallistuja));
-            }
-            return ret;
+            return this.data.oppilaat();
         },
-
+        
         addKoulutus(){
             this.edit(new Koulutus());
         },
