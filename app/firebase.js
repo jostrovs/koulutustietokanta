@@ -11,6 +11,7 @@ class Data {
         this.maxkey=0;
 
         this.signed_in = false;
+        this.read_only = false;
         
         this.koulutukset = [];
         this.users = [];

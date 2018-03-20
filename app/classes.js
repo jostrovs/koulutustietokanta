@@ -11,6 +11,7 @@ class Osallistuja {
             this.paikka = obj.paikka;
             this.vuosi = obj.vuosi;
             this.email = obj.email;
+            this.huom = obj.huom;
         }
 
         if(this.id < 1) this.id = id++;
@@ -18,12 +19,12 @@ class Osallistuja {
 
     toFirebase(){
         let ret = {};
-        ret.nimi = this.nimi ? this.nimi.toString() : "<puuttuu>";
+        ret.nimi = this.nimi ? this.nimi : "<puuttuu>";
         ret.postino = this.postino ? this.postino : "";
         ret.vuosi = this.vuosi ? this.vuosi : "";
         ret.paikka = this.paikka ? this.paikka : "";
         ret.email = this.email ? this.email : "";
-        ret.huom = this.huom ? this.email : "";
+        ret.huom = this.huom ? this.huom : "";
         
         return ret;
     }
@@ -62,6 +63,12 @@ class Koulutus {
 
     create(){
         this.osallistujat.push(new Osallistuja({id: id++}));
+    }
+
+    osallLkm(){
+        if(this.lkm) return this.lkm;
+        if(this.osallistujat.length > 0) return this.osallistujat.length;
+        return "";
     }
 
     toFirebase(){

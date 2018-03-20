@@ -57,20 +57,27 @@
                                 <v-card class="ma-2">
                                     <v-card-title primary-title>
                                         <h2>Koulutukset</h2>
-                                        <v-btn color="primary" @click="addKoulutus()">Lisää</v-btn>
+                                        <v-btn v-if="!data.read_only" color="primary" @click="addKoulutus()">Lisää</v-btn>
                                     </v-card-title>
                                     <v-card-text>
                                         <div style="display: flex">
                                             <div style="flex: 1; font-weight: bold">Pvm</div>
                                             <div style="flex: 1; font-weight: bold">Tilaisuus</div>
                                             <div style="flex: 1; font-weight: bold">Kouluttaja</div>
+                                            <div style="flex: 0.4; font-weight: bold">Osallistujia</div>
                                             <div style="flex: 1; font-weight: bold">Tools</div>
                                         </div>
                                         <div v-for="koulutus in data.koulutukset" style="display: flex">
                                             <div style="flex: 1">{{koulutus.pvm}}</div>
                                             <div style="flex: 1">{{koulutus.tilaisuus}}</div>
                                             <div style="flex: 1">{{koulutus.kouluttaja}}</div>
-                                            <div style="flex: 1"><v-btn color="primary" @click.stop="edit(koulutus)">Muokkaa</v-btn></div>
+                                            <div style="flex: 0.4">{{koulutus.osallLkm()}}</div>
+                                            <div style="flex: 1">
+                                                <v-tooltip right>
+                                                    <v-icon slot="activator" color="primary" style="cursor: pointer" v-if="!data.read_only" @click.stop="edit(koulutus)">mode_edit</v-icon>
+                                                    <span>Muokkaa</span>
+                                                </v-tooltip>
+                                            </div>
                                             
                                         </div>
                                     </v-card-text>

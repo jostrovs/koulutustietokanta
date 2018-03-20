@@ -30,6 +30,9 @@ new Vue({
                 { title: 'Nimi', width: "50%", key: 'nimi' },
                 { title: 'Vuosi', width: "10%", key: 'vuosi' },
                 { title: 'Email', width: "10%", key: 'email' },
+                { title: 'PostiNo', width: "10%", key: 'postino' },
+                { title: 'Paikka', width: "10%", key: 'paikka' },
+                { title: 'Huom', width: "10%", key: 'huom' },
             ],
 
             generalFilter: true,
