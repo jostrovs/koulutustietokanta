@@ -6,7 +6,7 @@ module.exports = {
   },
   modules: {
     autoRequire: {
-      'app.js': ['main']
+      'app.js': ['main', 'users']
     }
   }
 }

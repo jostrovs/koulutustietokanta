@@ -51,7 +51,9 @@ class Koulutus {
 
         if(!this.id) this.id = id++;
 
-        this.title = this.tilaisuus + "_" + this.pvm;
+        if(this.pvm) this.moment = moment(this.pvm);
+
+        this.title = this.tilaisuus + "_" + this.moment.format("DD.MM.YYYY");
         if(!this.tilaisuus && !this.pvm){
             this.title = "<uusi koulutus>";
             this.isNew = true;

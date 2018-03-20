@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koulutustietokanta - käyttäjähallinta</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet" type="text/css">
+    <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet" type="text/css"></link>
+    <link href="styles.css" rel="stylesheet" type="text/css">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-messaging.js"></script>
+
+    <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />  
+
+
+</head>
+<body>
+    <div id="app">
+        <v-app>
+            <v-content>
+                <v-container>
+                    <h1>Koulutustietokanta - käyttäjähallinta</h1>
+                    <span  v-if="signed_in" class="body-1">User: {{user.displayName}} uid: {{user.uid}} <v-btn small @click="sign_out()">Sign out</v-btn></span>
+
+                    <div v-show="!signed_in">
+                        <div id="firebaseui-auth-container"></div>
+                    </div>
+        
+                    <v-snackbar :timeout="5000" v-model="snackbar">
+                        {{snackbar_text}}
+                        <v-btn flat color="pink" @click.native="snackbar = false">Close</v-btn>
+                    </v-snackbar>
+
+                    <v-card class="ma-2">
+                        <v-card-title primary-title>
+                            <h2>Users</h2>
+                        </v-card-title>
+                    
+                        <v-btn absolute dark fab top right color="pink" @click="create()" v-if="signed_in">
+                            <v-icon>add</v-icon>
+                        </v-btn>
+
+                        <v-card-text>
+                            <v-list>
+                                <v-list-tile v-for="user in users" :key="user.uid">
+                                    <v-list-tile-action>
+                                        <v-tooltip top>
+                                            <v-icon v-if="user.admin" color="pink" slot="activator">supervisor_account</v-icon>
+                                            <span>Admin</span>
+                                        </v-tooltip>
+                                    </v-list-tile-action>                                    
+                                    <v-list-tile-content>
+                                        <v-list-tile-title v-text="user.nimi"></v-list-tile-title>
+                                    </v-list-tile-content>
+                                    <v-list-tile-content>
+                                        <v-list-tile-title v-text="user.uid"></v-list-tile-title>
+                                    </v-list-tile-content>
+                                    <v-list-tile-action>
+                                        <v-btn icon ripple @click="remove(user)">
+                                            <v-icon color="grey lighten-0">delete</v-icon>
+                                        </v-btn>
+                                    </v-list-tile-action>                                    
+                                    <v-list-tile-action>
+                                        <v-btn icon ripple  @click="edit(user)">
+                                            <v-icon color="grey">edit</v-icon>
+                                        </v-btn>
+                                    </v-list-tile-action>                                    
+                                </v-list-tile>
+                            </v-list>
+                        </v-card-text>
+                    </v-card>      
+                  
+                    <v-dialog v-model="edit_dialog"  max-width="320">
+                        <v-card>
+                            <v-card-title v-if="is_create">
+                                <v-icon color="black">person_add</v-icon>
+                                <h3 class="title mb-0">Lisää käyttäjä</h3>
+                            </v-card-title>
+                            <v-card-title v-else>
+                                <v-icon color="black">edit</v-icon>
+                                <h3 class="title mb-0">Muokkaa käyttäjää</h3>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-form>
+                                    <v-text-field label="Nimi" v-model="edit_user.nimi" required></v-text-field>
+                                    <v-switch label="Admin" v-model="edit_user.admin"></v-switch>
+                                </v-form>                                            
+                            </v-card-text>
+                            <v-card-text v-if="is_create">
+                                <v-text-field label="uid" v-model="edit_user.uid" required></v-text-field>
+                            </v-card-text>
+                            <v-card-text v-else>
+                                uid: {{edit_user.uid}}
+                            </v-card-text>
+                            <v-progress-linear v-bind:indeterminate="true" v-if="edit_progress"></v-progress-linear>
+                            <v-card-actions>
+                                <v-btn color="primary" @click.stop="edit(edit_user, true)">Talleta</v-btn>
+                                <v-btn color="error" @click.stop="edit_dialog=false">Peruuta</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+
+                    <v-dialog v-model="remove_dialog"  max-width="320">
+                        <v-card>
+                            <v-card-title>
+                                <v-icon color="black">delete</v-icon>
+                                <h3 class="title mb-0">Poista käyttäjä</h3>
+                            </v-card-title>
+                            <v-card-text>
+                                <p>Haluatko varmasti poistaa käyttäjän {{remove_user.nimi}}?</p>
+                            </v-card-text>
+                            <v-progress-linear v-bind:indeterminate="true" v-if="remove_progress"></v-progress-linear>
+                            <v-card-actions>
+                                <v-btn color="error" @click.stop="remove(remove_user, true)">Poista</v-btn>
+                                <v-btn color="primary" @click.stop="remove_dialog=false">Peruuta</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </v-container>  
+            </v-content>
+        </v-app>
+    </div>
+
+  
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+    <script src="users.js"></script>
+</body>
+</html>
