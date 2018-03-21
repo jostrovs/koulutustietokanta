@@ -1,12 +1,12 @@
-var Components = require("vue-components");
-var Classes = require("classes");
-var Firebase = require("firebase");
-var Bus = require("bus");
+import Components from "./vue-components"
+import Classes from "./classes"
+import Firebase from "./firebase"
+import Bus from "./bus"
 
 var Osallistuja = Classes.Osallistuja;
 var Koulutus = Classes.Koulutus;
 
-var Jos = require("jos.vue");
+import Jos from 'jos.vue'
 Vue.component("jos", Jos);
 
 new Vue({

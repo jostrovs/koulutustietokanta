@@ -1,5 +1,5 @@
-var Bus = require("bus");
-var Classes = require("classes");
+import Bus from "./bus"
+import Classes from "./classes"
 var Osallistuja = Classes.Osallistuja;
 var Koulutus = Classes.Koulutus;
 
