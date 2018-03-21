@@ -1,3 +1,5 @@
+var moment = require("moment");
+
 module.exports="compo";
 
 Vue.component('vue-jos-grid', {

@@ -8,5 +8,11 @@ module.exports = {
     autoRequire: {
       'app.js': ['main']
     }
-  }
+  },
+  plugins: {
+    vue: {
+      extractCSS: true,
+      out: './public/components.css'
+    }
+  }  
 }

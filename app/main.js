@@ -6,7 +6,8 @@ var Bus = require("bus");
 var Osallistuja = Classes.Osallistuja;
 var Koulutus = Classes.Koulutus;
 
-
+var Jos = require("jos.vue");
+Vue.component("jos", Jos);
 
 new Vue({
     el: '#app',
