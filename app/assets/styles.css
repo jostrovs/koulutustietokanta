@@ -73,3 +73,9 @@
     }      
     
     /******** josGrid END ****/
+
+#vue-koulutukset input {
+    border: 1px solid #eee;
+    width: 80%;
+    min-width: 50px;
+}

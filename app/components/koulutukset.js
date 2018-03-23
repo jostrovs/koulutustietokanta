@@ -4,16 +4,23 @@ module.exports="compo"
   
 Vue.component('vue-koulutukset',{
     template: `
-    <div>
+    <div id="vue-koulutukset">
         <div style="display: flex">
-            <div style="flex: 1; font-weight: bold">Pvm</div>
+            <div style="flex: 0.3; font-weight: bold">Pvm</div>
             <div style="flex: 1; font-weight: bold">Tilaisuus</div>
             <div style="flex: 1; font-weight: bold">Kouluttaja</div>
             <div style="flex: 0.4; font-weight: bold">Osallistujia</div>
             <div style="flex: 1; font-weight: bold">Tools</div>
         </div>
-        <div v-for="koulutus in koulutukset" style="display: flex" :key="koulutus.id">
-            <div style="flex: 1">{{koulutus.pvm}}</div>
+        <div style="display: flex">
+            <div style="flex: 0.3;"><input v-model="filters.pvm"></div>
+            <div style="flex: 1;"><input v-model="filters.tilaisuus"></div>
+            <div style="flex: 1;"><input v-model="filters.kouluttaja"></div>
+            <div style="flex: 0.4;"></div>
+            <div style="flex: 1;"></div>
+        </div>
+        <div v-for="koulutus in filtered" style="display: flex" :key="koulutus.id">
+            <div style="flex: 0.3">{{koulutus.pvm}}</div>
             <div style="flex: 1">{{koulutus.tilaisuus}}</div>
             <div style="flex: 1">{{koulutus.kouluttaja}}</div>
             <div style="flex: 0.4">{{koulutus.osallLkm()}}</div>
@@ -37,6 +44,18 @@ Vue.component('vue-koulutukset',{
     methods: {
         edit(koulutus){
             Bus.emit(Bus.EDIT_KOULUTUS, koulutus);
+        }
+    },
+    computed: {
+        filtered(){
+            let self=this;
+
+            let ret = this.koulutukset.map(i=>i);
+            if(self.filters.pvm) ret = ret.filter(it=>it.pvm.indexOf(self.filters.pvm)>=0);
+            if(self.filters.tilaisuus) ret = ret.filter(it=>it.tilaisuus.indexOf(self.filters.tilaisuus)>=0);
+            if(self.filters.kouluttaja) ret = ret.filter(it=>it.kouluttaja.indexOf(self.filters.kouluttaja)>=0);
+
+            return ret;
         }
     }
 });
