@@ -59,7 +59,7 @@
                                         <v-btn v-if="!data.read_only" color="primary" @click="addKoulutus()">Lisää</v-btn>
                                     </v-card-title>
                                     <v-card-text>
-                                        <vue-koulutukset :koulutukset="data.koulutukset" :filters="filters" :read_only="data.read_only"></vue-koulutukset>
+                                        <vue-koulutukset :data="data" :filters="filters"></vue-koulutukset>
                                     </v-card-text>
                                 </v-card>
                             </v-tab-item>

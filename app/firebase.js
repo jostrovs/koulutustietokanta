@@ -21,9 +21,9 @@ class Data {
 
         this.initFirebase();
         this.initFirebaseUi();
-
     }
 
+    
     oppilaat(){
         let ret = [];
         for(let i=0; i<this.koulutukset.length;++i){
@@ -32,7 +32,6 @@ class Data {
                 ret.push(koulutus.osallistujat[j]);
             }
         }
-
         return ret;
     }
 

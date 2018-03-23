@@ -5,6 +5,7 @@ module.exports="compo"
 Vue.component('vue-koulutukset',{
     template: `
     <div id="vue-koulutukset">
+        <div>Osallistujia yhteensä: {{total}}</div>
         <div style="display: flex">
             <div style="flex: 0.3; font-weight: bold">Pvm</div>
             <div style="flex: 1; font-weight: bold">Tilaisuus</div>
@@ -34,11 +35,11 @@ Vue.component('vue-koulutukset',{
     </div>
     `,
 
-    props: ['koulutukset', 'filters', 'read_only'], 
+    props: ['data', 'filters'], 
     data: function(){
         return {
-            //koul: this.koulutukset,
-            //filt: this.filters
+            koulutukset: this.data.koulutukset,
+            read_only: this.data.read_only
         }
     },
     methods: {
@@ -56,6 +57,14 @@ Vue.component('vue-koulutukset',{
             if(self.filters.kouluttaja) ret = ret.filter(it=>it.kouluttaja.indexOf(self.filters.kouluttaja)>=0);
 
             return ret;
+        },
+
+        total(){
+            let tot = 0;
+            this.koulutukset.map(it =>{ 
+                tot += it.osallLkm()
+            })
+            return tot;            
         }
     }
 });
