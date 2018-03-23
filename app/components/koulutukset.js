@@ -39,7 +39,8 @@ Vue.component('vue-koulutukset',{
     data: function(){
         return {
             koulutukset: this.data.koulutukset,
-            read_only: this.data.read_only
+            read_only: this.data.read_only,
+            total: 0,
         }
     },
     methods: {
@@ -56,15 +57,13 @@ Vue.component('vue-koulutukset',{
             if(self.filters.tilaisuus) ret = ret.filter(it=>it.tilaisuus.indexOf(self.filters.tilaisuus)>=0);
             if(self.filters.kouluttaja) ret = ret.filter(it=>it.kouluttaja.indexOf(self.filters.kouluttaja)>=0);
 
+            let tot=0;
+            ret.map(it =>{ 
+                tot += it.osallLkm()
+            });
+            self.total=tot;
+            
             return ret;
         },
-
-        total(){
-            let tot = 0;
-            this.koulutukset.map(it =>{ 
-                tot += it.osallLkm()
-            })
-            return tot;            
-        }
     }
 });
