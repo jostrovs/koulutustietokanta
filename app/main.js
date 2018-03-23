@@ -1,4 +1,8 @@
-import Components from "./vue-components"
+import VueComponents from "./vue-components"
+
+import VueKoulutukset from "./components/koulutukset"
+
+
 import Classes from "./classes"
 import Firebase from "./firebase"
 import Bus from "./bus"
@@ -17,6 +21,13 @@ new Vue({
         data: {
             signed_in: false 
         },//Firebase.data, asetetaan created-metodissa
+
+        filters: {
+            pvm: null,
+            tilaisuus: null,
+            kouluttaja: null,
+            osallistujia: null
+        },
 
         snackbar: false,
         snackbar_text: "",
@@ -56,7 +67,9 @@ new Vue({
         Bus.on(Bus.SNACKBAR, function(msg){
             self.snackbar_text = msg;
             self.snackbar = true;
-        })
+        });
+
+        Bus.on(Bus.EDIT_KOULUTUS, self.edit);
     },
     mounted: function(){
     },  

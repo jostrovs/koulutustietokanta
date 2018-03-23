@@ -123,7 +123,7 @@ class Data {
         // Vaihdetaan sisäisen listan tieto
         for(let i=0;i<this.koulutukset.length;++i){
             if(this.koulutukset[i].uid == koulutus.uid){
-                this.koulutukset[i] = koulutus;
+                this.koulutukset.splice(i, 1, koulutus);
                 return;
             }
         }

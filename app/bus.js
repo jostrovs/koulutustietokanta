@@ -12,6 +12,7 @@ var bus = new Vue({
 const SNACKBAR="SNACKBAR";
 const UPDATE_GRID= "UPDATE_GRID";
 const DOC_SAVED= "DOC SAVED";
+const EDIT_KOULUTUS= "EDIT KOULUTUS";
 
 function snackbar(message){
     console.log(message);
@@ -23,6 +24,7 @@ module.exports = {
     UPDATE_GRID,
     DOC_SAVED,
     SNACKBAR,
+    EDIT_KOULUTUS,
     on: function(event, callback){ bus.on(event, callback)},
     emit: function(event, payload){ bus.emit(event, payload)},
     snackbar: snackbar,
