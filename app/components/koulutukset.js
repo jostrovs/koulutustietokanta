@@ -7,9 +7,9 @@ Vue.component('vue-koulutukset',{
     <div id="vue-koulutukset">
         <div>Osallistujia yhteensä: {{total}}</div>
         <div style="display: flex">
-            <div style="flex: 0.3; font-weight: bold" @click="sortPvm">Pvm {{sort.pvm}}</div>
-            <div style="flex: 1; font-weight: bold" @click="sortTilaisuus">Tilaisuus {{sort.tilaisuus}}</div>
-            <div style="flex: 1; font-weight: bold" @click="sortKouluttaja">Kouluttaja  {{sort.kouluttaja}}</div>
+            <div style="flex: 0.3; font-weight: bold" @click="sortByKey('pvm')">Pvm {{sort.pvm}}</div>
+            <div style="flex: 1; font-weight: bold" @click="sortByKey('tilaisuus')">Tilaisuus {{sort.tilaisuus}}</div>
+            <div style="flex: 1; font-weight: bold" @click="sortByKey('kouluttaja')">Kouluttaja  {{sort.kouluttaja}}</div>
             <div style="flex: 0.4; font-weight: bold">Osallistujia</div>
             <div style="flex: 1; font-weight: bold">Tools</div>
         </div>
@@ -42,6 +42,7 @@ Vue.component('vue-koulutukset',{
             read_only: this.data.read_only,
             total: 0,
             sort: {
+                key: "",
                 pvm: 0,
                 tilaisuus: 0,
                 kouluttaja: 0,
@@ -53,35 +54,32 @@ Vue.component('vue-koulutukset',{
             Bus.emit(Bus.EDIT_KOULUTUS, koulutus);
         },
 
-        sortPvm(){
-            if(this.sort.pvm < 0) this.sort.pvm = 1;
-            else if(this.sort.pvm > 0) this.sort.pvm = 0;
-            else this.sort.pvm = -1;
-        },
-        sortTilaisuus(){
-            if(this.sort.tilaisuus < 0) this.sort.tilaisuus = 1;
-            else if(this.sort.tilaisuus > 0) this.sort.tilaisuus = 0;
-            else this.sort.tilaisuus = -1;
-        },
-        sortKouluttaja(){
-            if(this.sort.kouluttaja < 0) this.sort.kouluttaja = 1;
-            else if(this.sort.kouluttaja > 0) this.sort.kouluttaja = 0;
-            else this.sort.kouluttaja = -1;
-        },
+        sortByKey(key){
+            this.sort.key = key;
+            if(this.sort[key] < 0) this.sort[key] = 1;
+            else if(this.sort[key] > 0) this.sort[key] = 0;
+            else this.sort[key] = -1;
 
-        sortFunc(a,b){
-            if(a < b) return -1;
-            if(a > b) return 1;
-            return 0;
+            for(let k in this.sort){
+                if(k != key && k != "key") this.sort[k] = 0;
+            }
         },
 
         filtered(){
             let self=this;
 
             let ret = this.koulutukset.map(i=>i);
-            if(self.filters.pvm) ret = ret.filter(it=>it.pvm.indexOf(self.filters.pvm)>=0);
-            if(self.filters.tilaisuus) ret = ret.filter(it=>it.tilaisuus.indexOf(self.filters.tilaisuus)>=0);
-            if(self.filters.kouluttaja) ret = ret.filter(it=>it.kouluttaja.indexOf(self.filters.kouluttaja)>=0);
+            
+            for(let key in this.sort){
+                let needle = self.filters[key];
+                if(needle){
+                    needle = needle.toLowerCase();
+                    ret = ret.filter(it=>{
+                        let haystack = it[key] ? it[key] : "";
+                        return haystack.toLowerCase().indexOf(needle) >= 0;
+                    });
+                }
+            }
 
             let tot=0;
             ret.map(it =>{ 
@@ -99,17 +97,23 @@ Vue.component('vue-koulutukset',{
 
             let ret = this.filtered();
 
-            if(this.sort.pvm != 0){
-                return ret.sort((a,b)=>self.sortFunc(a.pvm, b.pvm));
-            }
-            if(this.sort.tilaisuus != 0){
-                return ret.sort((a,b)=>self.sortFunc(a.tilaisuus, b.tilaisuus));
-            }
-            if(this.sort.kouluttaja != 0){
-                return ret.sort((a,b)=>self.sortFunc(a.kouluttaja, b.kouluttaja));
-            }
+            let key = this.sort.key;
+            let direction = this.sort[key];
+            
+            if(!key || !direction) return ret;
 
-            return ret;
+            let sorted = ret.sort((a,b)=> {
+                let v1 = a[key];
+                let v2 = b[key];
+
+                let r = 0;
+                if(v1 < v2) r=-1;
+                if(v1 > v2) r=1;
+
+                return direction*r;
+            });
+
+            return sorted;
         }
     }
 });
