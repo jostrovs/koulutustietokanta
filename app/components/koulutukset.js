@@ -7,10 +7,10 @@ Vue.component('vue-koulutukset',{
     <div id="vue-koulutukset">
         <div>Osallistujia yhteensä: {{total}}</div>
         <div style="display: flex">
-            <div style="flex: 0.3; font-weight: bold" @click="sortByKey('pvm')">Pvm {{sort.pvm}}</div>
-            <div style="flex: 1; font-weight: bold" @click="sortByKey('tilaisuus')">Tilaisuus {{sort.tilaisuus}}</div>
-            <div style="flex: 1; font-weight: bold" @click="sortByKey('kouluttaja')">Kouluttaja  {{sort.kouluttaja}}</div>
-            <div style="flex: 0.4; font-weight: bold">Osallistujia</div>
+            <div style="flex: 0.3; font-weight: bold; display: flex" @click="sortByKey('pvm')">Pvm <i class="material-icons">{{sort.pvm | icon_filter}}</i></div>
+            <div style="flex: 1; font-weight: bold; display: flex" @click="sortByKey('tilaisuus')">Tilaisuus <i class="material-icons">{{sort.tilaisuus | icon_filter}}</i></div>
+            <div style="flex: 1; font-weight: bold; display: flex" @click="sortByKey('kouluttaja')">Kouluttaja <i class="material-icons">{{sort.kouluttaja | icon_filter}}</i></div>
+            <div style="flex: 0.4; font-weight: bold; display: flex" @click="sortByKey('osall')">Osallistujia <i class="material-icons">{{sort.osall | icon_filter}}</i></div>
             <div style="flex: 1; font-weight: bold">Tools</div>
         </div>
         <div style="display: flex">
@@ -46,6 +46,7 @@ Vue.component('vue-koulutukset',{
                 pvm: 0,
                 tilaisuus: 0,
                 kouluttaja: 0,
+                osall: 0,
             }
         }
     },
@@ -106,6 +107,11 @@ Vue.component('vue-koulutukset',{
                 let v1 = a[key];
                 let v2 = b[key];
 
+                if(key == "osall"){
+                    v1 = a.osallLkm();
+                    v2 = b.osallLkm();
+                } 
+
                 let r = 0;
                 if(v1 < v2) r=-1;
                 if(v1 > v2) r=1;
@@ -114,6 +120,13 @@ Vue.component('vue-koulutukset',{
             });
 
             return sorted;
+        }
+    },
+    filters: {
+        icon_filter: function(val){
+            if(val == 0) return "";
+            if(val > 0) return "arrow_drop_up";
+            if(val < 0) return "arrow_drop_down";
         }
     }
 });
