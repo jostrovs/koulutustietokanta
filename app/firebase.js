@@ -29,7 +29,10 @@ class Data {
         for(let i=0; i<this.koulutukset.length;++i){
             let koulutus = this.koulutukset[i];
             for(let j=0;j<koulutus.osallistujat.length;++j){
-                ret.push(koulutus.osallistujat[j]);
+                let opp = koulutus.osallistujat[j];
+                opp.koulutus_id = koulutus.id;
+                opp.koulutus_title = koulutus.title;
+                ret.push(opp);
             }
         }
         return ret;
