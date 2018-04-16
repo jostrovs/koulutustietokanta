@@ -14,6 +14,9 @@ class Osallistuja {
             this.vuosi = obj.vuosi;
             this.email = obj.email;
             this.huom = obj.huom;
+
+            this.koulutus_id = obj.koulutus_id,
+            this.koulutus_title = obj.koulutus_title
         }
 
         if(this.id < 1) this.id = id++;
