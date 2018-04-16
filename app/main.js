@@ -74,6 +74,10 @@ new Vue({
     mounted: function(){
     },  
     computed: {
+        level(){
+            if(!this.data) return 0;
+            return this.data.userLevel();
+        }
     },
 
     methods: {

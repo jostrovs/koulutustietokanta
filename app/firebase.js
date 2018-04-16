@@ -28,11 +28,19 @@ class Data {
         let ret = [];
         for(let i=0; i<this.koulutukset.length;++i){
             let koulutus = this.koulutukset[i];
+            if(!koulutus.osallistujat) continue;
             for(let j=0;j<koulutus.osallistujat.length;++j){
-                ret.push(koulutus.osallistujat[j]);
+                let item = new Osallistuja(koulutus.osallistujat[j]);
+                item.tilaisuus = koulutus.title;
+                ret.push(item);
             }
         }
         return ret;
+    }
+
+    sensitize(koulutus){
+        if(this.signed_in) return koulutus;
+        return koulutus.sensitize();
     }
 
     getData(){
@@ -51,7 +59,7 @@ class Data {
 
                 let newKoul = koulutus.data();
                 newKoul.uid = koulutus.id;
-                self.koulutukset.push(new Koulutus(newKoul));
+                self.koulutukset.push(self.sensitize(new Koulutus(newKoul)));
 
                 oppilasLoader--;
                 if(oppilasLoader < 1){
@@ -183,7 +191,6 @@ class Data {
                     // document.getElementById('sign-in').textContent = 'Sign out';
                 });
 
-                self.getData();
             } else {
                 // User is signed out.
                 self.signed_in = false;
@@ -192,11 +199,19 @@ class Data {
                 // document.getElementById('sign-in').textContent = 'Sign in';
                 // document.getElementById('account-details').textContent = 'null';
             }
+            self.getData();
+
         }, function(error) {
             console.log(error);
         });
     };
-    
+ 
+    userLevel(){
+        if(!this.signed_in) return 0;
+        if(this.user.admin) return 2;
+        return 1;
+    }
+
 }
 
 var dataClass=new Data();

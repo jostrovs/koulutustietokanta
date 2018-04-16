@@ -30,6 +30,12 @@ class Osallistuja {
         
         return ret;
     }
+
+    sensitize(){
+        this.nimi = "<piilotettu>";
+        this.email = "<piilotettu>";
+        this.huom = "<piilotettu>";
+    }
 }
 
 class Koulutus {
@@ -68,7 +74,10 @@ class Koulutus {
     }
 
     osallLkm(){
-        if(this.lkm) return this.lkm;
+        if(this.lkm){
+            if(this.lkm < this.osallistujat.length) return this.osallistujat.length;
+            return this.lkm;
+        }
         if(this.osallistujat.length > 0) return this.osallistujat.length;
         return "";
     }
@@ -87,6 +96,13 @@ class Koulutus {
         ret.osallistujat = this.osallistujat.map(osall=>osall.toFirebase());
 
         return ret;
+    }
+
+    sensitize(){
+        for(let i=0;i<this.osallistujat.length;++i){
+            this.osallistujat[i].sensitize();
+        }
+        return this;
     }
 }
 
