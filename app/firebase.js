@@ -30,16 +30,9 @@ class Data {
             let koulutus = this.koulutukset[i];
             if(!koulutus.osallistujat) continue;
             for(let j=0;j<koulutus.osallistujat.length;++j){
-<<<<<<< HEAD
                 let item = new Osallistuja(koulutus.osallistujat[j]);
                 item.tilaisuus = koulutus.title;
                 ret.push(item);
-=======
-                let opp = koulutus.osallistujat[j];
-                opp.koulutus_id = koulutus.id;
-                opp.koulutus_title = koulutus.title;
-                ret.push(opp);
->>>>>>> c1032c08a599010ffdd3a7970d44641e576d8088
             }
         }
         return ret;
