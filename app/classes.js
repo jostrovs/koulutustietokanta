@@ -14,6 +14,7 @@ class Osallistuja {
             this.vuosi = obj.vuosi;
             this.email = obj.email;
             this.huom = obj.huom;
+            this.gdpr = obj.gdpr;
 
             this.koulutus_id = obj.koulutus_id,
             this.koulutus_title = obj.koulutus_title
@@ -30,6 +31,7 @@ class Osallistuja {
         ret.paikka = this.paikka ? this.paikka : "";
         ret.email = this.email ? this.email : "";
         ret.huom = this.huom ? this.huom : "";
+        ret.gdpr = this.gdpr ? true : false;
         
         return ret;
     }

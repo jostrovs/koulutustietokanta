@@ -138,15 +138,17 @@
                                             <th>Paikkakunta</th>
                                             <th>Postinumero</th>
                                             <th>Syntymävuosi</th>
+                                            <th>GDPR</th>
                                             <th></th>
                                         </tr>
                                         <tr v-for="osallistuja in edit_koulutus.osallistujat">
-                                            <td><input type="text" placeholder="Nimi" v-model=osallistuja.nimi></td>
+                                            <td><input type="text" v-model=osallistuja.nimi></td>
                                             <td>{{osallistuja.id}}</td>
-                                            <td><input type="text" placeholder="Email" v-model=osallistuja.email></td>
-                                            <td><input type="text" placeholder="Paikkakunta" v-model=osallistuja.paikkakunta></td>
-                                            <td><input type="text" placeholder="Postinumero" v-model=osallistuja.postinumero></td>
-                                            <td><input type="text" placeholder="Syntymävuosi" v-model=osallistuja.vuosi></td>
+                                            <td><input type="text" v-model=osallistuja.email></td>
+                                            <td><input type="text" v-model=osallistuja.paikka></td>
+                                            <td><input type="text" v-model=osallistuja.postino></td>
+                                            <td><input type="text" v-model=osallistuja.vuosi></td>
+                                            <td><input type="checkbox" v-model="osallistuja.gdpr"></input></td>
                                             <td>
                                                 <v-icon @click="remove_osallistuja(osallistuja)">delete</v-icon>
                                             </td>
