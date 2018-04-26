@@ -90,7 +90,17 @@
                                 <v-card-text>
                                     <v-container fluid>
                                         <v-layout>
-                                            <v-text-field xs2 required label="Pvm" v-model="edit_koulutus.pvm" :readonly="edit_dialog.readonly"></v-text-field> &nbsp;&nbsp;
+                                            <v-flex xs12 sm6 md4>
+                                                <v-menu ref="date_picker_menu" lazy :close-on-content-click="false" v-model="date_picker_menu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="edit_koulutus.pvm">
+                                                    <v-text-field slot="activator" label="Picker in menu" v-model="edit_koulutus.pvm" prepend-icon="event" readonly></v-text-field>
+                                                    <v-date-picker v-model="edit_koulutus.pvm" no-title scrollable locale="fi-fi" first-day-of-week="1">
+                                                        <v-spacer></v-spacer>
+                                                        <v-btn flat color="primary" @click="date_picker_menu = false">Peruuta</v-btn>
+                                                        <v-btn flat color="primary" @click="$refs.date_picker_menu.save(edit_koulutus.pvm)">OK</v-btn>
+                                                    </v-date-picker>
+                                                </v-menu>
+                                            </v-flex>
+
                                             <v-text-field xs2 required label="Kouluttaja" v-model="edit_koulutus.kouluttaja" :readonly="edit_dialog.readonly"></v-text-field>&nbsp;&nbsp;
                                             <v-text-field xs2 required label="Tilaisuus" v-model="edit_koulutus.tilaisuus" :readonly="edit_dialog.readonly"></v-text-field>
                                         </v-layout>
@@ -106,9 +116,10 @@
                                     <v-container fluid>
                                         <div class="title">
                                             Osallistujat
-                                            <v-btn @click="editOsallistujat(edit_koulutus)"><v-icon>add</v-icon> Muokkaa osallistujia</v-btn>
+                                            <v-btn @click="editOsallistujat(edit_koulutus)">
+                                                <v-icon>add</v-icon> Muokkaa osallistujia</v-btn>
                                         </div>
-                                        
+
                                         <v-list>
                                             <template v-for="(osallistuja, index) in edit_koulutus.osallistujat">
                                               <v-divider :key="index"></v-divider>

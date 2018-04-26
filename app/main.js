@@ -17,6 +17,8 @@ new Vue({
     el: '#app',
     data: {
         tabs: null,
+ 
+        date_picker_menu: {},
 
         data: {
             signed_in: false 
@@ -108,6 +110,7 @@ new Vue({
 
             this.edit_dialog=true;
             this.edit_koulutus = new Koulutus(koulutus);
+            
         },
 
         save(koulutus){
