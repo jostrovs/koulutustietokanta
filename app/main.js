@@ -44,7 +44,9 @@ new Vue({
         oppilas_options: {
             columns: [
                 { title: 'Nimi', width: "20%", key: 'nimi' },
-                { title: 'Tilaisuus', width: "20%", key: 'koulutus_title' },
+                { title: 'Tilaisuus', width: "20%", key: 'tilaisuus', template: opp=>{
+                    return "<a>" + opp.tilaisuus + "</a>";
+                } },
                 { title: 'Vuosi', width: "10%", key: 'vuosi' },
                 { title: 'Email', width: "10%", key: 'email' },
                 { title: 'PostiNo', width: "10%", key: 'postino' },
@@ -83,6 +85,8 @@ new Vue({
     },
 
     methods: {
+
+
         oppilaat(){
             return this.data.oppilaat();
         },

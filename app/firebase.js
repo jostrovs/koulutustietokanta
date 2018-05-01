@@ -32,6 +32,7 @@ class Data {
             for(let j=0;j<koulutus.osallistujat.length;++j){
                 let item = new Osallistuja(koulutus.osallistujat[j]);
                 item.tilaisuus = koulutus.title;
+                item.tilaisuus_id = koulutus.id;
                 ret.push(item);
             }
         }
