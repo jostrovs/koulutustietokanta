@@ -26,7 +26,9 @@ Vue.component('vue-jos-grid', {
         <tbody>                                                                                                   
             <tr v-for="entry in filteredSortedData" :key="entry.josOrder" @click="rowClick(entry)">            
                 <td v-for="column in shownColumns">                                                               
-                    <div v-if="column.template" style="display: inline-block" v-html="entry[column.key]"></div>
+                    <div v-if="column.template && !column.onClick" style="display: inline-block" v-html="entry[column.key]"></div>
+                    <div v-else-if="column.template && column.onClick" style="display: inline-block" v-html="entry[column.key]" @click="column.onClick(entry)">
+                    </div>
                     <template v-else>
                         <template v-if="column.type == \'text\'">                                                     
                             {{entry[column.key]}}                                                                     
@@ -92,7 +94,8 @@ Vue.component('vue-jos-grid', {
 
                 self.options.columns.forEach(function (column) {
                     if(column.template != undefined){
-                        item[column.key] = column.template(item);
+                        if(column.key) item[column.key] = column.template(item);
+                        else if(column.name) item[column.name] = column.template(item);
                     }
                 });
                 localData.push(item);
