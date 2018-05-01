@@ -38,7 +38,7 @@ new Vue({
         users: [],
 
         edit_dialog: false,
-        edit_koulutus: {},
+        edit_koulutus: new Koulutus({}),
 
         osallistujat_dialog: false,
         oppilas_options: {
@@ -115,7 +115,8 @@ new Vue({
 
         save(koulutus){
             let self = this;
-            this.data.save(koulutus).then(function(){
+
+            self.data.save(koulutus).then(function(){
                 self.edit_dialog = false;
             });
         },

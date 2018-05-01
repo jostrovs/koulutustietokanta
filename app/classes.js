@@ -85,7 +85,7 @@ class Koulutus {
             return this.lkm;
         }
         if(this.osallistujat.length > 0) return this.osallistujat.length;
-        return "";
+        return 0;
     }
 
     toFirebase(){
@@ -109,6 +109,12 @@ class Koulutus {
             this.osallistujat[i].sensitize();
         }
         return this;
+    }
+
+    formattedDate(){
+        if(!this.pvm) return "";
+        let mome = moment(this.pvm);
+        return mome.format("DD.MM.YYYY");
     }
 }
 
