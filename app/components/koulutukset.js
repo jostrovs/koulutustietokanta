@@ -12,7 +12,7 @@ Vue.component('vue-koulutukset',{
             <div style="flex: 1; font-weight: bold; display: flex" @click="sortByKey('tilaisuus')">Tilaisuus <i class="material-icons">{{sort.tilaisuus | icon_filter}}</i></div>
             <div style="flex: 1; font-weight: bold; display: flex" @click="sortByKey('kouluttaja')">Kouluttaja <i class="material-icons">{{sort.kouluttaja | icon_filter}}</i></div>
             <div style="flex: 0.4; font-weight: bold; display: flex" @click="sortByKey('osall')">Osallistujia <i class="material-icons">{{sort.osall | icon_filter}}</i></div>
-            <div style="flex: 1; font-weight: bold" v-if="userLevel>0">Tools</div>
+            <div style="flex: 1; font-weight: bold" v-if="userLevel>0">&nbsp;</div>
         </div>
         <div style="display: flex">
             <div style="flex: 0.3;"><input v-model="filters.pvm"></div>
@@ -22,10 +22,10 @@ Vue.component('vue-koulutukset',{
             <div style="flex: 1;" v-if="userLevel>0"></div>
         </div>
         <div v-for="koulutus in sorted" style="display: flex" :key="koulutus.id">
-            <div style="flex: 0.3">{{koulutus.pvm}}</div>
+            <div style="flex: 0.3">{{koulutus.formattedDate()}}</div>
             <div style="flex: 1">{{koulutus.tilaisuus}}</div>
             <div style="flex: 1">{{koulutus.kouluttaja}}</div>
-            <div style="flex: 0.4">{{koulutus.osallLkm()}}</div>
+            <div style="flex: 0.4">{{koulutus.osallLkm() ? koulutus.osallLkm() : ""}}</div>
             <div style="flex: 1" v-if="userLevel>0">
                 <v-tooltip right>
                     <v-icon slot="activator" color="primary" style="cursor: pointer" v-if="!read_only" @click.stop="edit(koulutus)">mode_edit</v-icon>
