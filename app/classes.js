@@ -71,7 +71,7 @@ class Koulutus {
             this.title = "<uusi koulutus>";
             this.isNew = true;
         } else {
-            this.title = this.tilaisuus + "_" + this.moment.format("DD.MM.YYYY");
+            this.title = this.tilaisuus + " " + this.moment.format("DD.MM.YYYY");
         }
     }
 

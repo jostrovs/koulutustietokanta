@@ -87,3 +87,8 @@
     width: 80%;
     min-width: 50px;
 }
+
+
+#edit_osallistuja_lista th {
+    text-align: left;
+}

@@ -45,8 +45,7 @@
                             <v-tab-item key="3">
                                 <h1>Koulutustietokanta</h1>
                                 <div v-if="data.signed_in" class="body-1">User: {{data.user.displayName}} uid: {{data.user.uid}}
-                                    <v-btn small @click="sign_out()">Kirjaudu ulos
-                                        </>
+                                    <v-btn small @click="sign_out()">Kirjaudu ulos</v-btn>
                                 </div>
                                 <div v-show="!data.signed_in">
                                     <div id="firebaseui-auth-container"></div>
@@ -166,37 +165,34 @@
                                     <h2>
                                         Koulutuksen osallistujat - {{edit_koulutus.title}}
                                         <v-tooltip right>
-                                                <v-btn @click="edit_koulutus.create()" slot="activator" small dark fab color="pink">
-                                                    <v-icon>add</v-icon>
-                                                </v-btn>
-                                                <span>Lisää osallistuja</span>
-                                            </v-tooltip>
+                                            <v-btn @click="edit_koulutus.create()" slot="activator" small dark fab color="pink">
+                                                <v-icon>add</v-icon>
+                                            </v-btn>
+                                            <span>Lisää osallistuja</span>
+                                        </v-tooltip>
                                     </h2>
                                 </v-card-title>
                                 <v-card-text>
-                                    <table>
+                                    <table id="edit_osallistuja_lista" v-if="edit_koulutus.osallistujat.length > 0">
                                         <tr>
+                                            <th>&nbsp;</th>
                                             <th>Nimi</th>
-                                            <th>Uid</th>
                                             <th>Email</th>
                                             <th>Paikkakunta</th>
-                                            <th>Postinumero</th>
-                                            <th>Syntymävuosi</th>
+                                            <th>Postino</th>
+                                            <th>Synt.v</th>
                                             <th>GDPR</th>
-                                            <th></th>
+                                            <th>&nbsp;</th>
                                         </tr>
-                                        <tr v-for="osallistuja in edit_koulutus.osallistujat">
+                                        <tr v-for="(osallistuja, index) in edit_koulutus.osallistujat">
+                                            <td>{{index+1}}.</td>
                                             <td><input type="text" v-model=osallistuja.nimi></td>
-                                            <td>{{osallistuja.id}}</td>
                                             <td><input type="text" v-model=osallistuja.email></td>
                                             <td><input type="text" v-model=osallistuja.paikka></td>
-                                            <td><input type="text" v-model=osallistuja.postino></td>
-                                            <td><input type="text" v-model=osallistuja.vuosi></td>
-                                            <td><input type="checkbox" v-model="osallistuja.gdpr"></input>
-                                            </td>
-                                            <td>
-                                                <v-icon @click="remove_osallistuja(osallistuja)">delete</v-icon>
-                                            </td>
+                                            <td><input type="text" v-model=osallistuja.postino style="width: 60px"></td>
+                                            <td><input type="text" v-model=osallistuja.vuosi style="width: 50px"></td>
+                                            <td><input type="checkbox" v-model="osallistuja.gdpr"></td>
+                                            <td><v-icon @click="remove_osallistuja(osallistuja)">delete</v-icon></td>    
                                         </tr>
                                     </table>
                                 </v-card-text>
