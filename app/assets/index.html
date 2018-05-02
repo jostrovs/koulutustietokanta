@@ -70,7 +70,6 @@
                                 <v-card class="ma-2">
                                     <v-card-title primary-title>
                                         <h2>Koulutetut</h2>
-                                        Linkit pitäisi virittää
                                     </v-card-title>
                                     <v-card-text>
                                         <div v-for="oppilas in oppilaat">
@@ -141,14 +140,16 @@
                                         </div>
 
                                         <v-list>
-                                            <template v-for="(osallistuja, index) in edit_koulutus.osallistujat">
-                                              <v-divider :key="index"></v-divider>
-                                              <v-list-tile :key="osallistuja.id" @click="">
-                                                <v-list-tile-content>
-                                                   {{index+1}}. {{osallistuja.nimi}}
-                                                </v-list-tile-content>
-                                              </v-list-tile>
-                                            </template>
+                                            <div style="display: flex; font-weight: bold">
+                                                <div style="width: 60px">No</div>
+                                                <div style="flex: 0.25">Nimi</div>
+                                                <div style="width: 60px">Vuosi</div>
+                                            </div>
+                                            <div style="display: flex" v-for="(osallistuja, index) in edit_koulutus.osallistujat">
+                                                <div style="width: 60px">{{index+1}}.</div>
+                                                <div style="flex: 0.25">{{osallistuja.nimi}}</div>
+                                                <div style="width: 60px">{{osallistuja.vuosi}}</div>
+                                            </div>
                                         </v-list>
                                     </v-container>
                                 </v-card-text>
