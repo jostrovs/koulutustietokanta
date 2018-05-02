@@ -38,6 +38,8 @@ new Vue({
         users: [],
 
         edit_dialog: false,
+        edit_dialog_readonly: false,
+        edit_dialog_isnew: false,
         edit_koulutus: new Koulutus({}),
 
         osallistujat_dialog: false,
@@ -84,9 +86,7 @@ new Vue({
                     key: 'huom'
                 },
                 {   hidden: true,  key: 'tilaisuus' },
-                {   hidden: true,  key: 'tilaisuus_til'},
-                {   hidden: true,  key: 'tilaisuus_koul'},
-                {   hidden: true,  key: 'tilaisuus_pvm'},
+                {   hidden: true,  key: 'tilaisuus_id'},
             ],
 
             generalFilter: true,
@@ -123,9 +123,8 @@ new Vue({
         klikker(entry) {
             let a = entry;
             this.tabs = "1"; // Valitaan koulutukset-tabi
-            this.filters.tilaisuus = entry.tilaisuus_til;
-            this.filters.kouluttaja = entry.tilaisuus_koul;
-            this.filters.pvm = entry.tilaisuus_pvm;
+            let koulutus = this.data.koulutukset.filter(it => it.id == entry.tilaisuus_id);
+            this.edit(koulutus[0], true);
         },
 
         oppilaat() {
@@ -156,8 +155,11 @@ new Vue({
         },
 
 
-        edit(koulutus) {
+        edit(koulutus, read_only) {
             let self = this;
+
+            if(read_only) this.edit_dialog_readonly = true;
+            else this.edit_dialog_readonly = false;
 
             this.edit_dialog = true;
             this.edit_koulutus = new Koulutus(koulutus);

@@ -78,6 +78,7 @@ Vue.component('vue-koulutukset',{
                     needle = needle.toLowerCase();
                     ret = ret.filter(it=>{
                         let haystack = it[key] ? it[key] : "";
+                        if(key == 'pvm') haystack = it.formattedDate();
                         return haystack.toLowerCase().indexOf(needle) >= 0;
                     });
                 }
