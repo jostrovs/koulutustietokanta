@@ -95,7 +95,7 @@
                                     <v-container fluid>
                                         <v-layout>
                                             <v-flex xs12 sm6 md4>
-                                                <v-text-field v-if="edit_dialog_readonly" xs2 required label="Pvm" :value="edit_koulutus.formattedDate()" readonly></v-text-field>&nbsp;&nbsp;
+                                                <v-text-field v-if="edit_dialog_readonly" xs2 required label="Pvm" :value="edit_koulutus.formattedDate()" readonly></v-text-field>
                                                 <v-menu v-else ref="date_picker_menu" lazy :close-on-content-click="false" v-model="date_picker_menu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="edit_koulutus.pvm">
                                                     <v-text-field slot="activator" label="Päivämäärä" :value="edit_koulutus.formattedDate()" prepend-icon="event" readonly required></v-text-field>
                                                     <v-date-picker v-model="edit_koulutus.pvm" no-title scrollable locale="fi-fi" first-day-of-week="1">
