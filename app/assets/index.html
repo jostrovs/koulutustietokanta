@@ -94,27 +94,38 @@
                                 <v-card-text>
                                     <v-container fluid>
                                         <v-layout>
-                                            <v-flex xs12 sm6 md4>
+                                            <div style="display: inlune-block; width: 200px" mr-1>
                                                 <v-text-field v-if="edit_dialog_readonly" xs2 required label="Pvm" :value="edit_koulutus.formattedDate()" readonly></v-text-field>
                                                 <v-menu v-else ref="date_picker_menu" lazy :close-on-content-click="false" v-model="date_picker_menu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="edit_koulutus.pvm">
-                                                    <v-text-field slot="activator" label="Päivämäärä" :value="edit_koulutus.formattedDate()" prepend-icon="event" readonly required></v-text-field>
+                                                    <v-text-field slot="activator" label="Päivämäärä" :value="edit_koulutus.formattedDate()" readonly required></v-text-field>
                                                     <v-date-picker v-model="edit_koulutus.pvm" no-title scrollable locale="fi-fi" first-day-of-week="1">
                                                         <v-spacer></v-spacer>
                                                         <v-btn flat color="primary" @click="date_picker_menu = false">Peruuta</v-btn>
                                                         <v-btn flat color="primary" @click="$refs.date_picker_menu.save(edit_koulutus.pvm)">OK</v-btn>
                                                     </v-date-picker>
                                                 </v-menu>
+                                            </div>
+
+                                            <v-flex xs4 sm4 md3 lg2 xl2 ml-4>
+                                                <v-text-field required label="Kouluttaja" v-model="edit_koulutus.kouluttaja" :readonly="edit_dialog_readonly"></v-text-field>
                                             </v-flex>
 
-                                            <v-text-field xs2 required label="Kouluttaja" v-model="edit_koulutus.kouluttaja" :readonly="edit_dialog_readonly"></v-text-field>&nbsp;&nbsp;
-                                            <v-text-field xs2 required label="Tilaisuus" v-model="edit_koulutus.tilaisuus" :readonly="edit_dialog_readonly"></v-text-field>
+                                            <v-flex xs4 sm4 md3 lg2 xl2 ml-4>
+                                                <v-text-field required label="Tilaisuus" v-model="edit_koulutus.tilaisuus" :readonly="edit_dialog_readonly"></v-text-field>
+                                            </v-flex>
                                         </v-layout>
-                                        <v-layout row>
-                                            <v-text-field xs2 label="Koulutuspaikka" v-model="edit_koulutus.paikka" :readonly="edit_dialog_readonly"></v-text-field>&nbsp;&nbsp;
-                                            <v-text-field xs2 label="Alue" v-model="edit_koulutus.alue" :readonly="edit_dialog_readonly"></v-text-field>
+                                        <v-layout>
+                                            <v-flex xs4 sm4 md3 lg2 xl2>
+                                                <v-text-field label="Koulutuspaikka" v-model="edit_koulutus.paikka" :readonly="edit_dialog_readonly"></v-text-field>&nbsp;&nbsp;
+                                            </v-flex>
+                                            <v-flex xs4 sm4 md3 lg2 xl2 ml-4>
+                                                <v-text-field label="Alue" v-model="edit_koulutus.alue" :readonly="edit_dialog_readonly"></v-text-field>
+                                            </v-flex>
                                         </v-layout>
-                                        <v-layout row>
-                                            <v-text-field xs5 label="Huomioita" v-model="edit_koulutus.info" :readonly="edit_dialog_readonly"></v-text-field>
+                                        <v-layout>
+                                            <v-flex>
+                                                <v-text-field label="Huomioita" v-model="edit_koulutus.info" :readonly="edit_dialog_readonly"></v-text-field>
+                                            </v-flex>
                                         </v-layout>
                                     </v-container>
 
