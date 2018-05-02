@@ -5,24 +5,23 @@ module.exports="compo"
 Vue.component('vue-koulutukset',{
     template: `
     <div id="vue-koulutukset">
-        <div>Level: {{userLevel}} </div>
         <div>Osallistujia yhteensä: {{total}}</div>
         <div style="display: flex">
-            <div style="flex: 0.3; font-weight: bold; display: flex" @click="sortByKey('pvm')">Pvm <i class="material-icons">{{sort.pvm | icon_filter}}</i></div>
+            <div style="width: 110px; font-weight: bold; display: flex" @click="sortByKey('pvm')">Pvm <i class="material-icons">{{sort.pvm | icon_filter}}</i></div>
             <div style="flex: 1; font-weight: bold; display: flex" @click="sortByKey('tilaisuus')">Tilaisuus <i class="material-icons">{{sort.tilaisuus | icon_filter}}</i></div>
             <div style="flex: 1; font-weight: bold; display: flex" @click="sortByKey('kouluttaja')">Kouluttaja <i class="material-icons">{{sort.kouluttaja | icon_filter}}</i></div>
             <div style="flex: 0.4; font-weight: bold; display: flex" @click="sortByKey('osall')">Osallistujia <i class="material-icons">{{sort.osall | icon_filter}}</i></div>
             <div style="flex: 1; font-weight: bold" v-if="userLevel>0">&nbsp;</div>
         </div>
         <div style="display: flex">
-            <div style="flex: 0.3;"><input v-model="filters.pvm"></div>
+            <div style="width: 110px; display: inline-block"><input v-model="filters.pvm"></div>
             <div style="flex: 1;"><input v-model="filters.tilaisuus"></div>
             <div style="flex: 1;"><input v-model="filters.kouluttaja"></div>
             <div style="flex: 0.4;"></div>
             <div style="flex: 1;" v-if="userLevel>0"></div>
         </div>
         <div v-for="koulutus in sorted" style="display: flex" :key="koulutus.id">
-            <div style="flex: 0.3">{{koulutus.formattedDate()}}</div>
+            <div style="width: 110px; display: inline-block">{{koulutus.formattedDate()}}</div>
             <div style="flex: 1">{{koulutus.tilaisuus}}</div>
             <div style="flex: 1">{{koulutus.kouluttaja}}</div>
             <div style="flex: 0.4">{{koulutus.osallLkm() ? koulutus.osallLkm() : ""}}</div>
