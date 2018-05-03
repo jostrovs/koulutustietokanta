@@ -71,10 +71,6 @@
                                         <h2>Koulutetut</h2>
                                     </v-card-title>
                                     <v-card-text>
-                                        <div v-for="oppilas in oppilaat">
-                                            {{oppilas.nimi}}
-                                        </div>
-
                                         <vue-jos-grid :data="oppilaat()" :options="oppilas_options"></vue-jos-grid>
                                     </v-card-text>
                                 </v-card>

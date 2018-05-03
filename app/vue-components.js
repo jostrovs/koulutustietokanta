@@ -27,7 +27,7 @@ Vue.component('vue-jos-grid', {
             <tr v-for="entry in filteredSortedData" :key="entry.josOrder" @click="rowClick(entry)">            
                 <td v-for="column in shownColumns">                                                               
                     <div v-if="column.template && !column.onClick" style="display: inline-block" v-html="entry[column.key]"></div>
-                    <div v-else-if="column.template && column.onClick" style="display: inline-block" v-html="entry[column.key]" @click="column.onClick(entry)">
+                    <div v-else-if="column.link_click" style="display: inline-block" v-html="entry[column.name]" @click="column.onClick(entry)">
                     </div>
                     <template v-else>
                         <template v-if="column.type == \'text\'">                                                     

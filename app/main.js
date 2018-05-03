@@ -58,7 +58,8 @@ new Vue({
                     },
                     onClick: entry => {
                         Bus.emit(Bus.LINK_CLICK, entry);
-                    }
+                    },
+                    link_click: true,
                 },
                 {
                     title: 'Vuosi',
