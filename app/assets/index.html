@@ -78,8 +78,8 @@
 
                         </v-tabs>
 
-                        <v-dialog :overlay="false" scrollable v-model="edit_dialog">
-                            <v-form ref="form" v-model="edit_dialog_valid">
+                        <v-form ref="form" v-model="edit_dialog_valid">
+                            <v-dialog :overlay="false" scrollable v-model="edit_dialog">
                                 <v-card>
                                     <v-card-title primary-title>
                                         <h2 v-if="edit_dialog_readonly">{{edit_koulutus.title}}</h2>
@@ -154,8 +154,8 @@
                                         <v-btn @click.stop="edit_dialog=false">Sulje</v-btn>
                                     </v-card-actions>
                                 </v-card>
-                            </v-form>
-                        </v-dialog>
+                            </v-dialog>
+                        </v-form>
 
                         <v-dialog :overlay="true" scrollable v-model="osallistujat_dialog">
                             <v-card>
