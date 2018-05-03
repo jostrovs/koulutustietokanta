@@ -40,7 +40,12 @@ new Vue({
         edit_dialog: false,
         edit_dialog_readonly: false,
         edit_dialog_isnew: false,
+        edit_dialog_valid: false,
         edit_koulutus: new Koulutus({}),
+
+        pvmRules: [ v => !!v || "Päivämäärä on pakollinen" ],
+        tilaisuusRules: [ v => !!v || "Tilaisuus on annettava" ],
+        kouluttajaRules: [ v => !!v || "Kouluttaja on annettava" ],
 
         osallistujat_dialog: false,
         oppilas_options: {
@@ -169,6 +174,8 @@ new Vue({
 
         save(koulutus) {
             let self = this;
+            if(!this.$refs.form.validate()) return;
+
 
             self.data.save(koulutus).then(function() {
                 self.edit_dialog = false;

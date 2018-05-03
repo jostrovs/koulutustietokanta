@@ -79,80 +79,82 @@
                         </v-tabs>
 
                         <v-dialog :overlay="false" scrollable v-model="edit_dialog">
-                            <v-card>
-                                <v-card-title primary-title>
-                                    <h2 v-if="edit_dialog_readonly">{{edit_koulutus.title}}</h2>
-                                    <h2 v-else-if="edit_dialog_isnew">Uusi koulutus</h2>
-                                    <h2 v-else>Muokkaa koulutusta - {{edit_koulutus.title}}</h2>
-                                </v-card-title>
-                                <v-card-text>
-                                    <v-container fluid>
-                                        <v-layout>
-                                            <div style="display: inlune-block; width: 200px" mr-1>
-                                                <v-text-field v-if="edit_dialog_readonly" xs2 required label="Pvm" :value="edit_koulutus.formattedDate()" readonly></v-text-field>
-                                                <v-menu v-else ref="date_picker_menu" lazy :close-on-content-click="false" v-model="date_picker_menu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="edit_koulutus.pvm">
-                                                    <v-text-field slot="activator" label="Päivämäärä" :value="edit_koulutus.formattedDate()" readonly required></v-text-field>
-                                                    <v-date-picker v-model="edit_koulutus.pvm" no-title scrollable locale="fi-fi" first-day-of-week="1">
-                                                        <v-spacer></v-spacer>
-                                                        <v-btn flat color="primary" @click="date_picker_menu = false">Peruuta</v-btn>
-                                                        <v-btn flat color="primary" @click="$refs.date_picker_menu.save(edit_koulutus.pvm)">OK</v-btn>
-                                                    </v-date-picker>
-                                                </v-menu>
+                            <v-form ref="form" v-model="edit_dialog_valid">
+                                <v-card>
+                                    <v-card-title primary-title>
+                                        <h2 v-if="edit_dialog_readonly">{{edit_koulutus.title}}</h2>
+                                        <h2 v-else-if="edit_dialog_isnew">Uusi koulutus</h2>
+                                        <h2 v-else>Muokkaa koulutusta - {{edit_koulutus.title}}</h2>
+                                    </v-card-title>
+                                    <v-card-text>
+                                        <v-container fluid>
+                                            <v-layout>
+                                                <div style="display: inlune-block; width: 200px" mr-1>
+                                                    <v-text-field v-if="edit_dialog_readonly" xs2 required label="Pvm" :value="edit_koulutus.formattedDate()" readonly></v-text-field>
+                                                    <v-menu v-else ref="date_picker_menu" lazy :close-on-content-click="false" v-model="date_picker_menu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="edit_koulutus.pvm">
+                                                        <v-text-field slot="activator" label="Päivämäärä" :value="edit_koulutus.formattedDate()" readonly required :rules="pvmRules"></v-text-field>
+                                                        <v-date-picker v-model="edit_koulutus.pvm" no-title scrollable locale="fi-fi" first-day-of-week="1">
+                                                            <v-spacer></v-spacer>
+                                                            <v-btn flat color="primary" @click="date_picker_menu = false">Peruuta</v-btn>
+                                                            <v-btn flat color="primary" @click="$refs.date_picker_menu.save(edit_koulutus.pvm)">OK</v-btn>
+                                                        </v-date-picker>
+                                                    </v-menu>
+                                                </div>
+
+                                                <v-flex xs4 sm4 md3 lg2 xl2 ml-4>
+                                                    <v-text-field required label="Kouluttaja" v-model="edit_koulutus.kouluttaja" :readonly="edit_dialog_readonly" :rules="kouluttajaRules"></v-text-field>
+                                                </v-flex>
+
+                                                <v-flex xs4 sm4 md3 lg2 xl2 ml-4>
+                                                    <v-text-field required label="Tilaisuus" v-model="edit_koulutus.tilaisuus" :readonly="edit_dialog_readonly" :rules="tilaisuusRules"></v-text-field>
+                                                </v-flex>
+                                            </v-layout>
+                                            <v-layout>
+                                                <v-flex xs4 sm4 md3 lg2 xl2>
+                                                    <v-text-field label="Koulutuspaikka" v-model="edit_koulutus.paikka" :readonly="edit_dialog_readonly"></v-text-field>&nbsp;&nbsp;
+                                                </v-flex>
+                                                <v-flex xs4 sm4 md3 lg2 xl2 ml-4>
+                                                    <v-text-field label="Alue" v-model="edit_koulutus.alue" :readonly="edit_dialog_readonly"></v-text-field>
+                                                </v-flex>
+                                            </v-layout>
+                                            <v-layout>
+                                                <v-flex>
+                                                    <v-text-field label="Huomioita" v-model="edit_koulutus.info" :readonly="edit_dialog_readonly"></v-text-field>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-container>
+
+                                        <v-container fluid>
+                                            <div class="title">
+                                                Osallistujat
+                                                <v-tooltip right v-if="!edit_dialog_readonly">
+                                                    <v-btn @click="editOsallistujat(edit_koulutus)" slot="activator" dark color="pink" small fab>
+                                                        <v-icon>edit</v-icon>
+                                                    </v-btn>
+                                                    <span>Muokkaa osallistujia</span>
+                                                </v-tooltip>
                                             </div>
 
-                                            <v-flex xs4 sm4 md3 lg2 xl2 ml-4>
-                                                <v-text-field required label="Kouluttaja" v-model="edit_koulutus.kouluttaja" :readonly="edit_dialog_readonly"></v-text-field>
-                                            </v-flex>
-
-                                            <v-flex xs4 sm4 md3 lg2 xl2 ml-4>
-                                                <v-text-field required label="Tilaisuus" v-model="edit_koulutus.tilaisuus" :readonly="edit_dialog_readonly"></v-text-field>
-                                            </v-flex>
-                                        </v-layout>
-                                        <v-layout>
-                                            <v-flex xs4 sm4 md3 lg2 xl2>
-                                                <v-text-field label="Koulutuspaikka" v-model="edit_koulutus.paikka" :readonly="edit_dialog_readonly"></v-text-field>&nbsp;&nbsp;
-                                            </v-flex>
-                                            <v-flex xs4 sm4 md3 lg2 xl2 ml-4>
-                                                <v-text-field label="Alue" v-model="edit_koulutus.alue" :readonly="edit_dialog_readonly"></v-text-field>
-                                            </v-flex>
-                                        </v-layout>
-                                        <v-layout>
-                                            <v-flex>
-                                                <v-text-field label="Huomioita" v-model="edit_koulutus.info" :readonly="edit_dialog_readonly"></v-text-field>
-                                            </v-flex>
-                                        </v-layout>
-                                    </v-container>
-
-                                    <v-container fluid>
-                                        <div class="title">
-                                            Osallistujat
-                                            <v-tooltip right v-if="!edit_dialog_readonly">
-                                                <v-btn @click="editOsallistujat(edit_koulutus)" slot="activator" dark color="pink" small fab>
-                                                    <v-icon>edit</v-icon>
-                                                </v-btn>
-                                                <span>Muokkaa osallistujia</span>
-                                            </v-tooltip>
-                                        </div>
-
-                                        <v-list>
-                                            <div style="display: flex; font-weight: bold">
-                                                <div style="width: 60px">No</div>
-                                                <div style="flex: 0.25">Nimi</div>
-                                                <div style="width: 60px">Vuosi</div>
-                                            </div>
-                                            <div style="display: flex" v-for="(osallistuja, index) in edit_koulutus.osallistujat">
-                                                <div style="width: 60px">{{index+1}}.</div>
-                                                <div style="flex: 0.25">{{osallistuja.nimi}}</div>
-                                                <div style="width: 60px">{{osallistuja.vuosi}}</div>
-                                            </div>
-                                        </v-list>
-                                    </v-container>
-                                </v-card-text>
-                                <v-card-actions>
-                                    <v-btn v-if="!edit_dialog_readonly" color="primary" @click.stop="save(edit_koulutus)">Talleta</v-btn>
-                                    <v-btn @click.stop="edit_dialog=false">Sulje</v-btn>
-                                </v-card-actions>
-                            </v-card>
+                                            <v-list>
+                                                <div style="display: flex; font-weight: bold">
+                                                    <div style="width: 60px">No</div>
+                                                    <div style="flex: 0.25">Nimi</div>
+                                                    <div style="width: 60px">Vuosi</div>
+                                                </div>
+                                                <div style="display: flex" v-for="(osallistuja, index) in edit_koulutus.osallistujat">
+                                                    <div style="width: 60px">{{index+1}}.</div>
+                                                    <div style="flex: 0.25">{{osallistuja.nimi}}</div>
+                                                    <div style="width: 60px">{{osallistuja.vuosi}}</div>
+                                                </div>
+                                            </v-list>
+                                        </v-container>
+                                    </v-card-text>
+                                    <v-card-actions>
+                                        <v-btn v-if="!edit_dialog_readonly" color="primary" @click.stop="save(edit_koulutus)">Talleta</v-btn>
+                                        <v-btn @click.stop="edit_dialog=false">Sulje</v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-form>
                         </v-dialog>
 
                         <v-dialog :overlay="true" scrollable v-model="osallistujat_dialog">
@@ -188,7 +190,9 @@
                                             <td><input type="text" v-model=osallistuja.postino style="width: 60px"></td>
                                             <td><input type="text" v-model=osallistuja.vuosi style="width: 50px"></td>
                                             <td><input type="checkbox" v-model="osallistuja.gdpr"></td>
-                                            <td><v-icon @click="remove_osallistuja(osallistuja)">delete</v-icon></td>    
+                                            <td>
+                                                <v-icon @click="remove_osallistuja(osallistuja)">delete</v-icon>
+                                            </td>
                                         </tr>
                                     </table>
                                 </v-card-text>
