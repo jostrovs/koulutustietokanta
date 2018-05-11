@@ -50,6 +50,17 @@
                                 <div v-show="!data.signed_in">
                                     <div id="firebaseui-auth-container"></div>
                                 </div>
+                                
+                                <div style="height: 60px;">
+                                </div>
+                                <div v-if="useStubs">
+                                    <h3>Tietojen talletus: Hiekkalaatikko</h3> Ei käytä tietokantaa, eli tomintoja voi kokeilla vapaasti. Takaisin alkutilanteeseen pääsee lataamalla sivun uudelleen.
+                                    <v-btn @click="toggleStubs()">Käytä tietokantaa</v-btn>
+                                </div>
+                                <div v-else style="border: 2px solid red; padding: 10px;">
+                                    <h3>Tietojen talletus: Muutokset talletetaan tietokantaan</h3> Kaikki muutokset talletetaan tietokantaan.
+                                    <v-btn @click="toggleStubs()">Siirry harjoittelutilaan</v-btn>
+                                </div>
                             </v-tab-item>
 
                             <v-tab-item key="1">

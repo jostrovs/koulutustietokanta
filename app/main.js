@@ -16,6 +16,8 @@ Vue.component("jos", Jos);
 new Vue({
     el: '#app',
     data: {
+        useStubs: localStorage.useStubs!="false",
+        
         tabs: null,
 
         date_picker_menu: {},
@@ -58,6 +60,7 @@ new Vue({
                     title: 'Tilaisuus',
                     width: "20%",
                     name: 'tilaisuus',
+                    key: 'tilaisuus',
                     template: opp => {
                         return "<a>" + opp.tilaisuus + "</a>";
                     },
@@ -184,7 +187,12 @@ new Vue({
 
         editOsallistujat(koulutus) {
             this.osallistujat_dialog = true;
-        }
+        },
 
+        toggleStubs(){
+            this.useStubs = !this.useStubs;
+            localStorage.useStubs = this.useStubs;
+            location.reload();
+        }
     }
 })

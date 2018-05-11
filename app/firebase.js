@@ -7,7 +7,9 @@ var Koulutus = Classes.Koulutus;
 
 let id = 1;
 
-let useStubs = true;
+let useStubs = localStorage.useStubs != "false";
+if(useStubs == undefined) useStubs = true;
+localStorage.useStubs = useStubs;
 
 class Data {
 
